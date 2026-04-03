@@ -1,0 +1,243 @@
+<main class="relative min-h-screen overflow-hidden">
+  <!-- Organic flowing background -->
+  <div class="fixed inset-0 -z-10">
+    <div class="absolute inset-0 bg-linear-to-b from-sky-100 via-emerald-50 to-white"></div>
+    <svg class="absolute inset-0 h-full w-full" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="rgba(34, 197, 94, 0.08)" />
+          <stop offset="100%" stop-color="rgba(16, 185, 129, 0.03)" />
+        </linearGradient>
+        <linearGradient id="wave2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="rgba(56, 189, 248, 0.06)" />
+          <stop offset="100%" stop-color="rgba(34, 197, 94, 0.04)" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M0,100 Q200,50 400,100 T800,100 T1200,100 T1600,100 L1600,400 Q1200,350 800,400 T0,400 Z"
+        fill="url(#wave1)"
+        class="animate-pulse"
+        style="animation-duration: 8s"
+      />
+      <path
+        d="M0,200 Q300,150 600,200 T1200,200 T1600,200 L1600,500 Q1000,450 500,500 T0,500 Z"
+        fill="url(#wave2)"
+        class="animate-pulse"
+        style="animation-duration: 10s; animation-delay: 2s"
+      />
+    </svg>
+
+    <div class="absolute right-[10%] top-[15%] h-64 w-64 rounded-full bg-linear-to-br from-emerald-200/40 to-transparent blur-3xl"></div>
+    <div class="absolute left-[5%] top-[40%] h-48 w-48 rounded-full bg-linear-to-tr from-sky-200/30 to-transparent blur-3xl"></div>
+    <div class="absolute bottom-[20%] right-[20%] h-56 w-56 rounded-full bg-linear-to-tl from-lime-200/30 to-transparent blur-3xl"></div>
+
+    <svg class="absolute -bottom-4 -left-4 h-72 w-72 opacity-30" viewBox="0 0 200 200" fill="none">
+      <defs>
+        <linearGradient id="springLeafMain" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#22c55e" />
+          <stop offset="100%" stop-color="#4ade80" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M160,40 C175,55 180,80 170,105 C155,145 110,175 60,165 C35,160 20,140 25,115 C30,90 55,75 85,80 C100,82 110,90 105,105 C100,120 80,130 60,125 C75,135 100,135 120,115 C140,95 145,70 130,50 C115,30 85,25 60,40 C35,55 25,85 35,115 C45,145 75,165 110,160 C145,155 170,125 175,90 C180,55 160,25 125,20 C100,17 75,25 60,40 C85,20 120,20 145,35 C155,42 160,40 160,40Z"
+        fill="url(#springLeafMain)"
+      />
+      <path
+        d="M140,50 C150,65 150,85 140,100 C125,125 95,140 65,130 C50,125 45,110 55,95 C65,80 85,75 100,85 C90,75 70,78 60,95 C50,112 55,130 75,135 C105,142 135,120 145,90 C150,70 145,55 140,50Z"
+        fill="url(#springLeafMain)"
+        opacity="0.6"
+      />
+    </svg>
+  </div>
+
+  <!-- Floating nav -->
+  <nav class="sticky top-4 z-50 mx-4 md:mx-8">
+    <div class="mx-auto max-w-6xl">
+      <div class="flex items-center justify-between rounded-full bg-white/70 px-6 py-3 shadow-lg shadow-emerald-900/5 backdrop-blur-xl">
+        <div class="flex items-center gap-2">
+          <app-eco-leaf-icon className="h-8 w-8"></app-eco-leaf-icon>
+          <span class="bg-linear-to-r from-emerald-600 to-teal-500 bg-clip-text text-xl font-bold text-transparent">ecoScore</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="hidden text-sm text-emerald-700/70 sm:block">Company Profile</span>
+          <div class="h-8 w-8 rounded-full bg-linear-to-br from-emerald-400 to-teal-500"></div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="relative mx-auto max-w-6xl px-4 pb-16 pt-8 md:px-8">
+
+    <!-- Hero section -->
+    <section class="relative mb-8">
+      <div class="relative overflow-hidden rounded-[2.5rem] bg-linear-to-br from-white/80 via-white/60 to-emerald-50/40 p-8 shadow-xl shadow-emerald-900/10 backdrop-blur-sm md:p-12">
+        <svg class="absolute -right-12 -top-12 h-48 w-48 text-emerald-500/10" viewBox="0 0 100 100">
+          <path d="M50,5 Q80,25 75,55 Q70,85 50,95 Q30,85 25,55 Q20,25 50,5" fill="currentColor" />
+        </svg>
+        <svg class="absolute -bottom-8 -left-8 h-32 w-32 rotate-45 text-teal-500/10" viewBox="0 0 100 100">
+          <path d="M50,5 Q80,25 75,55 Q70,85 50,95 Q30,85 25,55 Q20,25 50,5" fill="currentColor" />
+        </svg>
+
+        <div class="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12">
+
+          <!-- Company Info -->
+          <div class="flex-1">
+            <div class="flex items-center gap-4">
+              <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-linear-to-br from-emerald-400 to-teal-500 shadow-lg shadow-emerald-500/30">
+                <span class="text-2xl">🏢</span>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h1 class="text-2xl font-bold text-emerald-900 md:text-3xl">{{ company.name }}</h1>
+                  <span *ngIf="company.verified" class="flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                    ✅ Verified
+                  </span>
+                </div>
+                <p class="text-emerald-600/80">{{ company.industry }}</p>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap gap-4 text-sm text-emerald-700/70">
+              <span class="flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1.5 backdrop-blur-sm">📍 {{ company.location }}</span>
+              <span class="flex items-center gap-1.5 rounded-full bg-white/60 px-3 py-1.5 backdrop-blur-sm">🌐 {{ company.website }}</span>
+            </div>
+
+            <p class="mt-6 max-w-xl leading-relaxed text-emerald-800/70">
+              A leading asset management firm demonstrating strong environmental responsibility
+              with 45% of AUM allocated to ESG-compliant investments and carbon-neutral operations since 2024.
+            </p>
+          </div>
+
+          <!-- Main score -->
+          <div class="relative flex items-center justify-center">
+            <div class="relative">
+              <div class="absolute -inset-4 rounded-full bg-linear-to-br from-emerald-200 via-teal-100 to-lime-100 opacity-60 blur-xl"></div>
+              <div class="relative flex h-44 w-44 flex-col items-center justify-center rounded-full bg-linear-to-br from-white via-white to-emerald-50 shadow-2xl shadow-emerald-500/20">
+                <svg class="absolute inset-0 h-full w-full -rotate-90">
+                  <defs>
+                    <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#34d399"></stop>
+                      <stop offset="50%" stop-color="#22c55e"></stop>
+                      <stop offset="100%" stop-color="#16a34a"></stop>
+                    </linearGradient>
+                  </defs>
+                  <circle cx="88" cy="88" r="78" fill="none" stroke="#e5e7eb" stroke-width="8" opacity="0.3"></circle>
+                  <circle
+                    cx="88"
+                    cy="88"
+                    r="78"
+                    fill="none"
+                    stroke="url(#scoreGradient)"
+                    stroke-width="8"
+                    stroke-linecap="round"
+                    [attr.stroke-dasharray]="overallDashArray"
+                    class="drop-shadow-lg"
+                  ></circle>
+                </svg>
+                <span class="bg-linear-to-br from-emerald-600 to-teal-600 bg-clip-text text-5xl font-bold text-transparent">{{ scores.overall }}</span>
+                <span class="text-sm font-medium text-emerald-600">Good</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Category scores -->
+    <section class="mb-8 overflow-hidden rounded-4xl bg-linear-to-r from-emerald-500 via-teal-500 to-emerald-600 p-1 shadow-xl shadow-emerald-900/20">
+      <div class="flex flex-wrap items-center justify-around gap-4 rounded-[1.8rem] bg-white/95 px-6 py-6 backdrop-blur-sm md:flex-nowrap md:gap-0 md:px-8">
+        <div *ngFor="let item of categories; let i = index" class="flex items-center gap-6">
+          <div *ngIf="i > 0" class="hidden h-12 w-px bg-linear-to-b from-transparent via-emerald-200 to-transparent md:block"></div>
+          <div class="flex items-center gap-3">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-emerald-50 to-teal-50">
+              <span class="text-lg" *ngIf="item.label === 'Carbon'">🍃</span>
+              <span class="text-lg" *ngIf="item.label === 'Water'">💧</span>
+              <span class="text-lg" *ngIf="item.label === 'Energy'">⚡</span>
+              <span class="text-lg" *ngIf="item.label === 'Waste'">♻️</span>
+            </div>
+            <div>
+              <p class="text-sm text-emerald-600/70">{{ item.label }}</p>
+              <p class="text-2xl font-bold" [ngClass]="getScoreColor(item.score)">{{ item.score }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Paladin CTA -->
+    <section class="mb-8">
+      <div class="relative overflow-hidden rounded-4xl bg-linear-to-br from-emerald-500 via-teal-500 to-emerald-600 p-8 shadow-xl shadow-emerald-900/20">
+        <svg class="absolute inset-0 h-full w-full opacity-20" preserveAspectRatio="none">
+          <path d="M0,0 Q100,50 200,20 T400,40 T600,20 T800,40 L800,200 Q600,180 400,200 T0,200 Z" fill="white" />
+        </svg>
+        <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl"></div>
+        <div class="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-teal-300/20 blur-3xl"></div>
+
+        <div class="relative flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
+          <div class="max-w-lg">
+            <h2 class="text-2xl font-bold text-white md:text-3xl">Unlock Your Full Potential</h2>
+            <p class="mt-2 text-emerald-100/90">
+              Get a comprehensive environmental audit with actionable insights from our ecoPaladin experts.
+            </p>
+          </div>
+          <app-eco-paladin-button></app-eco-paladin-button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stats and details -->
+    <section class="grid gap-6 md:grid-cols-3">
+      <div class="space-y-4 md:col-span-1">
+        <div *ngFor="let stat of stats" class="group relative overflow-hidden rounded-2xl bg-white/70 p-5 shadow-lg shadow-emerald-900/5 backdrop-blur-sm transition-all hover:bg-white/90 hover:shadow-xl">
+          <div class="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-linear-to-br from-emerald-100 to-transparent opacity-0 transition-opacity group-hover:opacity-100"></div>
+          <div class="relative flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-emerald-100 to-teal-50">
+                <span class="text-xl" *ngIf="stat.label === 'Employees'">👥</span>
+                <span class="text-xl" *ngIf="stat.label === 'ESG Allocation'">📈</span>
+                <span class="text-xl" *ngIf="stat.label === 'Green Projects'">🌲</span>
+              </div>
+              <div>
+                <p class="text-sm text-emerald-600/70">{{ stat.label }}</p>
+                <p class="text-2xl font-bold text-emerald-900">{{ stat.value }}</p>
+              </div>
+            </div>
+            <span class="rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700">
+              {{ stat.trend }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6 md:col-span-2">
+        <div class="overflow-hidden rounded-3xl bg-white/70 shadow-lg shadow-emerald-900/5 backdrop-blur-sm">
+          <div class="border-b border-emerald-100 bg-linear-to-r from-emerald-50/80 to-transparent px-6 py-4">
+            <h3 class="flex items-center gap-2 text-lg font-semibold text-emerald-900">🌲 Sustainability Initiatives</h3>
+          </div>
+          <div class="divide-y divide-emerald-50">
+            <div *ngFor="let item of initiatives" class="flex items-center justify-between px-6 py-4 transition-colors hover:bg-emerald-50/50">
+              <div>
+                <p class="font-medium text-emerald-900">{{ item.title }}</p>
+                <p class="text-sm text-emerald-600/70">{{ item.desc }}</p>
+              </div>
+              <span class="rounded-full px-3 py-1 text-xs font-medium" [ngClass]="item.status === 'Active' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'">
+                {{ item.status }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl bg-white/70 p-6 shadow-lg shadow-emerald-900/5 backdrop-blur-sm">
+          <h3 class="mb-4 flex items-center gap-2 text-lg font-semibold text-emerald-900">🏆 Certifications & Commitments</h3>
+          <div class="flex flex-wrap gap-3">
+            <span *ngFor="let cert of certifications" class="rounded-full bg-linear-to-r from-emerald-50 to-teal-50 px-4 py-2 text-sm font-medium text-emerald-700 shadow-sm transition-all hover:from-emerald-100 hover:shadow-md">
+              {{ cert }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>

@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+:root {
+	--background: oklch(0.98 0.01 145);
+	--foreground: oklch(0.2 0.03 150);
+	--card: oklch(1 0 0);
+	--card-foreground: oklch(0.2 0.03 150);
+	--popover: oklch(1 0 0);
+	--popover-foreground: oklch(0.2 0.03 150);
+	--primary: oklch(0.55 0.2 145);
+	--primary-foreground: oklch(1 0 0);
+	--secondary: oklch(0.92 0.04 145);
+	--secondary-foreground: oklch(0.3 0.08 145);
+	--muted: oklch(0.95 0.02 145);
+	--muted-foreground: oklch(0.45 0.03 150);
+	--accent: oklch(0.65 0.18 145);
+	--accent-foreground: oklch(1 0 0);
+	--destructive: oklch(0.577 0.245 27.325);
+	--destructive-foreground: oklch(0.577 0.245 27.325);
+	--border: oklch(0.88 0.04 145);
+	--input: oklch(0.92 0.02 145);
+	--ring: oklch(0.55 0.2 145);
+	--chart-1: oklch(0.55 0.2 145);
+	--chart-2: oklch(0.65 0.18 145);
+	--chart-3: oklch(0.45 0.15 145);
+	--chart-4: oklch(0.75 0.12 145);
+	--chart-5: oklch(0.6 0.22 130);
+	--radius: 1rem;
+	--eco-leaf: oklch(0.55 0.2 145);
+	--eco-leaf-light: oklch(0.75 0.15 145);
+	--eco-sky: oklch(0.85 0.08 220);
+	--eco-glow: oklch(0.9 0.1 145);
+}
+
+* {
+	border-color: var(--border);
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+}
+
+.glass-card {
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+	backdrop-filter: blur(20px);
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	box-shadow:
+		0 8px 32px rgba(0, 128, 64, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.glass-button {
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 255, 240, 0.9) 100%);
+	box-shadow:
+		0 4px 16px rgba(0, 128, 64, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 1),
+		inset 0 -1px 0 rgba(0, 128, 64, 0.1);
+}
+
+.eco-gradient {
+	background: linear-gradient(135deg, oklch(0.55 0.2 145) 0%, oklch(0.65 0.18 145) 50%, oklch(0.45 0.15 145) 100%);
+}
+
+.sky-gradient {
+	background: linear-gradient(180deg, oklch(0.92 0.04 200) 0%, oklch(0.98 0.01 145) 100%);
+}
