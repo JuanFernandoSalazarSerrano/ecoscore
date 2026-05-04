@@ -1,0 +1,154 @@
+<!-- report-ready.component.html -->
+<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center p-6">
+  <div class="max-w-lg w-full">
+    <!-- Main Card -->
+    <div class="bg-white rounded-3xl shadow-2xl shadow-emerald-900/10 border border-emerald-100 overflow-hidden">
+      <!-- Top Decorative Bar -->
+      <div class="h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-500"></div>
+
+      <div class="p-10 text-center">
+        <!-- Animated Icon Container -->
+        <div class="relative mx-auto mb-8 w-40 h-40">
+          <!-- Pulsing Background Rings -->
+          <div class="absolute inset-0 animate-ping rounded-full bg-emerald-200 opacity-20"></div>
+          <div class="absolute inset-4 animate-pulse rounded-full bg-emerald-100 opacity-40"></div>
+
+          <!-- Icon Background Circle -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-36 h-36 rounded-full bg-gradient-to-br from-emerald-50 to-teal-100 flex items-center justify-center shadow-inner">
+              <!-- SVG Icon -->
+              <svg
+                viewBox="0 0 48 48"
+                class="w-24 h-24 drop-shadow-lg"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4ade80" />
+                    <stop offset="50%" stop-color="#22c55e" />
+                    <stop offset="100%" stop-color="#16a34a" />
+                  </linearGradient>
+                  <linearGradient id="swooshGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#86efac" />
+                    <stop offset="100%" stop-color="#22c55e" />
+                  </linearGradient>
+                </defs>
+
+                <path
+                  d="M8 36C12 28 20 18 38 14"
+                  stroke="url(#swooshGradient)"
+                  stroke-width="4"
+                  stroke-linecap="round"
+                  fill="none"
+                />
+
+                <path
+                  d="M24 8C24 8 36 12 38 24C40 36 28 42 24 42C20 42 8 36 10 24C12 12 24 8 24 8Z"
+                  fill="url(#leafGradient)"
+                />
+
+                <path
+                  d="M24 14V34M24 20L18 26M24 26L30 32"
+                  stroke="white"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-opacity="0.6"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Checkmark Badge -->
+          <div class="absolute -bottom-1 -right-1 w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-lg shadow-emerald-500/30 border-4 border-white">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Your report is ready!</h1>
+
+        <!-- Subtitle -->
+        <p class="text-gray-500 mb-6">The ecological assessment has been completed successfully.</p>
+
+        <!-- Report Details Card -->
+        <div class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-5 mb-8 text-left">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm shrink-0">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-semibold text-gray-800">{{ reportName }}</h3>
+              <p class="text-sm text-gray-600">{{ facilityName }}</p>
+              <p class="text-xs text-emerald-600 mt-1">Generated on {{ generatedDate }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold shadow-lg shadow-emerald-500/25 hover:shadow-xl hover:shadow-emerald-500/30 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Download Report
+          </button>
+          <a
+            class="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white border-2 border-emerald-200 text-emerald-700 font-semibold hover:bg-emerald-50 hover:border-emerald-300 transition-all"
+            [routerLink]="['/eco-paladin-results']"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            View Report
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="bg-gray-50 border-t border-gray-100 px-10 py-4">
+        <div class="flex items-center justify-center gap-2 text-sm text-gray-500">
+          <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+          </svg>
+          <span>Powered by <strong class="text-emerald-600">ecoScore</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Share Options -->
+    <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
+      <span class="text-sm text-gray-500">Share report:</span>
+      <button class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-500 hover:text-emerald-600 hover:shadow-lg transition-all">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+      </button>
+      <button class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-500 hover:text-emerald-600 hover:shadow-lg transition-all">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+        </svg>
+      </button>
+      <button class="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center text-gray-500 hover:text-emerald-600 hover:shadow-lg transition-all">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm-1-8c-.69 0-1.25-.56-1.25-1.25S7.31 6.5 8 6.5s1.25.56 1.25 1.25S8.69 9 8 9zm10 8h-2v-3.5c0-1.38-1.12-2.5-2.5-2.5S11 12.12 11 13.5V17H9v-7h2v1.03c.58-.82 1.5-1.28 2.5-1.28 1.93 0 3.5 1.57 3.5 3.5V17z"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="mt-6 flex items-center justify-center">
+      <a
+        class="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-emerald-700 shadow-sm shadow-emerald-100 transition hover:-translate-y-0.5 hover:shadow-md"
+        [routerLink]="['/home']"
+      >
+        <span aria-hidden="true">←</span>
+        Back to home
+      </a>
+    </div>
+  </div>
+</div>

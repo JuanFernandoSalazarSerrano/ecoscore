@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EcoScore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-teal-50 to-sky-50 relative overflow-hidden">
+
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-emerald-200/30 to-teal-200/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-teal-200/30 to-emerald-200/20 rounded-full blur-3xl"></div>
+</div>
+
+<div class="relative w-full max-w-md">
+    <div class="bg-white/80 rounded-3xl shadow-xl shadow-emerald-900/10 border border-white/60 p-8">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/30 mb-4">
+                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">ecoScore</h1>
+            <p class="text-emerald-600/70 mt-2">Sign in to your account</p>
+        </div>
+
+        <form action="/login" method="post" class="space-y-5">
+            <div class="space-y-2">
+                <label for="username" class="block text-sm font-medium text-emerald-800">Username</label>
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
+                        class="w-full px-4 py-3 rounded-xl bg-white/70 border border-emerald-200/60 outline-none text-emerald-900 placeholder-emerald-400/60"
+                        required
+                />
+            </div>
+
+            <div class="space-y-2">
+                <label for="password" class="block text-sm font-medium text-emerald-800">Password</label>
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        class="w-full px-4 py-3 rounded-xl bg-white/70 border border-emerald-200/60 outline-none text-emerald-900 placeholder-emerald-400/60"
+                        required
+                />
+            </div>
+
+            <div class="flex items-center justify-between text-sm">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 rounded border-emerald-300 text-emerald-500"/>
+                    <span class="text-emerald-700">Remember me</span>
+                </label>
+                <a href="#" class="text-emerald-600 font-medium">Forgot password?</a>
+            </div>
+
+            <button
+                    type="submit"
+                    class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold shadow-lg shadow-emerald-500/30"
+            >
+                Sign In
+            </button>
+        </form>
+
+        <div class="my-6 flex items-center gap-4">
+            <div class="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-200 to-transparent"></div>
+            <span class="text-sm text-emerald-500/70">or</span>
+            <div class="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-200 to-transparent"></div>
+        </div>
+
+        <p class="text-center text-emerald-700">
+            Don&apos;t have an account?
+            <a href="#" class="font-semibold text-emerald-600">Create Account</a>
+        </p>
+    </div>
+
+    <div class="mt-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-emerald-100/60 text-sm text-emerald-600">
+            <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+            </svg>
+            <span>Secured with 256-bit encryption</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

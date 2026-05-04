@@ -20,6 +20,16 @@
             "projectName": "unihikerdb",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-CompanyApplication<company>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.fsalazar.company.CompanyApplication",
+            "projectName": "company",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }

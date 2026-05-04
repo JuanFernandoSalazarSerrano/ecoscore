@@ -1,4 +1,13 @@
 <section class="mx-auto w-full max-w-7xl p-4 md:p-8">
+	<div class="mb-4">
+		<a
+			class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-emerald-600 shadow-sm shadow-emerald-100 transition hover:-translate-y-0.5 hover:shadow-md"
+			[routerLink]="['/home']"
+		>
+			<span aria-hidden="true">←</span>
+			Back to home
+		</a>
+	</div>
 	<article class="overflow-hidden rounded-3xl border border-emerald-100/70 bg-white/80 shadow-xl shadow-emerald-900/10 backdrop-blur-sm">
 		<!-- Document Header -->
 		<header class="border-b border-emerald-100 bg-linear-to-r from-sky-100 via-emerald-50 to-white px-6 py-6 md:px-8">
@@ -103,27 +112,10 @@
 					</tbody>
 				</table>
 			</div>
-
-			<!-- Executive Resume Text Area -->
-			<div class="mt-6 overflow-hidden rounded-3xl border border-emerald-100 bg-white/75 shadow-lg shadow-emerald-900/5 backdrop-blur-sm">
-				<div class="border-b border-emerald-100 bg-linear-to-r from-emerald-50/80 via-white/70 to-sky-50/70 px-5 py-3">
-					<h3 class="text-base font-semibold text-emerald-900">Executive Resume</h3>
-					<p class="mt-1 text-xs text-emerald-700/70">Add a concise professional summary of the deployment results and key ecological insights.</p>
-				</div>
-
-				<div class="p-5">
-					<textarea
-						rows="8"
-						class="w-full rounded-2xl border border-emerald-200/80 bg-white/85 p-4 text-sm leading-relaxed text-emerald-900 outline-none ring-0 placeholder:text-emerald-600/55 focus:border-emerald-300 focus:shadow-[0_0_0_4px_rgba(74,222,128,0.18)]"
-						placeholder="Write here a professional summary of trends, risks, efficiency impact, and recommended actions based on the table above..."
-					></textarea>
-				</div>
-			</div>
-
-			<p class="mt-3 text-xs text-emerald-700/70">
-				Note: This report follows the EcoScore visual standard (emerald/teal palette, soft gradients, and glass-style surfaces)
-				while using spreadsheet-like tabular formatting for formal review workflows.
-			</p>
 		</section>
 	</article>
+
+	<div class="mt-8">
+		<app-airesume></app-airesume>
+	</div>
 </section>

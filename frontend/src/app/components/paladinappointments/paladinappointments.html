@@ -1,0 +1,351 @@
+<!-- paladinappointments.component.html -->
+<div class="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 py-8 px-4">
+  <!-- Header -->
+  <div class="max-w-6xl mx-auto mb-8">
+    <div class="mb-4">
+      <a
+        class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-emerald-600 shadow-sm shadow-emerald-100 transition hover:-translate-y-0.5 hover:shadow-md"
+        [routerLink]="['/home']"
+      >
+        <span aria-hidden="true">←</span>
+        Back to home
+      </a>
+    </div>
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/25">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Audit Appointments</h1>
+          <p class="text-sm text-gray-500">Manage your scheduled facility audits</p>
+        </div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="hidden md:flex items-center gap-4">
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-emerald-100">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          <span class="text-sm text-gray-600">4 Upcoming</span>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-emerald-100">
+          <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+          <span class="text-sm text-gray-600">2 In Progress</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="max-w-6xl mx-auto mb-6">
+    <div class="flex flex-wrap gap-2">
+      <button
+        *ngFor="let filter of filters"
+        (click)="selectedFilter = filter.id"
+        [class]="'flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ' +
+          (selectedFilter === filter.id
+            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+            : 'bg-white text-gray-600 hover:bg-emerald-50 border border-emerald-100')">
+        {{ filter.label }}
+        <span [class]="'px-2 py-0.5 rounded-full text-xs ' +
+          (selectedFilter === filter.id ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-700')">
+          {{ filter.count }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Appointments List -->
+  <div class="max-w-6xl mx-auto">
+    <div class="grid gap-4">
+      <div
+        *ngFor="let appointment of filteredAppointments; trackBy: trackByAppointmentId"
+        class="bg-white rounded-2xl shadow-lg shadow-emerald-900/5 border border-emerald-100 overflow-hidden hover:shadow-xl transition-all cursor-pointer"
+        (click)="openDetails(appointment)">
+
+        <div class="p-6">
+          <div class="flex flex-col lg:flex-row lg:items-center gap-4">
+            <!-- Facility Info -->
+            <div class="flex items-start gap-4 flex-1">
+              <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center text-2xl shrink-0">
+                {{ getFacilityIcon(appointment.facilityType) }}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-lg font-semibold text-gray-800 truncate">{{ appointment.facilityName }}</h3>
+                  <span [class]="'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ' +
+                    getStatusConfig(appointment.status).bgClass + ' ' + getStatusConfig(appointment.status).textClass">
+                    <span [class]="'w-1.5 h-1.5 rounded-full ' + getStatusConfig(appointment.status).dotClass"></span>
+                    {{ getStatusConfig(appointment.status).label }}
+                  </span>
+                </div>
+                <p class="text-sm text-emerald-600 font-medium mb-1">{{ appointment.facilityType }}</p>
+                <div class="flex items-center gap-1 text-sm text-gray-500">
+                  <svg class="w-4 h-4 text-rose-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                  </svg>
+                  <span>{{ appointment.city }}, {{ appointment.country }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="flex items-center gap-6 lg:gap-8">
+              <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 rounded-xl">
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Date</div>
+                  <div class="text-sm font-semibold text-gray-800">{{ formatDate(appointment.date) }}</div>
+                </div>
+                <div class="w-px h-8 bg-gray-200"></div>
+                <div class="text-center">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Time</div>
+                  <div class="text-sm font-semibold text-gray-800">{{ appointment.time }}</div>
+                </div>
+              </div>
+
+              <!-- Audit Types -->
+              <div class="hidden md:flex items-center gap-1">
+                <div
+                  *ngFor="let type of appointment.auditTypes"
+                  class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-sm"
+                  [title]="getAuditTypeConfig(type).label">
+                  {{ getAuditTypeConfig(type).icon }}
+                </div>
+              </div>
+
+              <!-- Score (if completed or in-progress) -->
+              <div *ngIf="appointment.ecoScore" class="relative w-16 h-16">
+                <svg class="w-16 h-16 transform -rotate-90">
+                  <circle cx="32" cy="32" r="28" stroke-width="4" fill="none" class="stroke-gray-100"/>
+                  <circle
+                    cx="32" cy="32" r="28" stroke-width="4" fill="none"
+                    [class]="getScoreRingColor(appointment.ecoScore)"
+                    stroke-linecap="round"
+                    [attr.stroke-dasharray]="175.93"
+                    [attr.stroke-dashoffset]="175.93 - (175.93 * appointment.ecoScore / 100)"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span [class]="'text-lg font-bold ' + getScoreColor(appointment.ecoScore)">{{ appointment.ecoScore }}</span>
+                </div>
+              </div>
+
+              <!-- Arrow -->
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Notes Preview (if any) -->
+          <div *ngIf="appointment.notes" class="mt-4 pt-4 border-t border-gray-100">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+              <p class="text-sm text-gray-600">{{ appointment.notes }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="filteredAppointments.length === 0" class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-12 text-center">
+        <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-1">No appointments found</h3>
+        <p class="text-sm text-gray-500">There are no appointments matching your current filter.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div *ngIf="selectedAppointment" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeDetails()"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <!-- Modal Header -->
+      <div class="sticky top-0 bg-gradient-to-r from-emerald-500 to-teal-500 p-6 rounded-t-3xl">
+        <button
+          (click)="closeDetails()"
+          class="absolute top-4 right-4 w-8 h-8 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center text-3xl">
+            {{ getFacilityIcon(selectedAppointment.facilityType) }}
+          </div>
+          <div>
+            <span [class]="'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-white/20 text-white mb-2'">
+              <span [class]="'w-1.5 h-1.5 rounded-full bg-white'"></span>
+              {{ getStatusConfig(selectedAppointment.status).label }}
+            </span>
+            <h2 class="text-xl font-bold text-white">{{ selectedAppointment.facilityName }}</h2>
+            <p class="text-emerald-100">{{ selectedAppointment.facilityType }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6">
+        <!-- Appointment ID -->
+        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+          <span class="text-sm text-gray-500">Appointment ID</span>
+          <span class="text-sm font-mono font-semibold text-emerald-600">{{ selectedAppointment.id }}</span>
+        </div>
+
+        <!-- Location -->
+        <div>
+          <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-rose-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+            </svg>
+            Location
+          </h4>
+          <div class="bg-gray-50 rounded-xl p-4">
+            <p class="text-gray-800 font-medium">{{ selectedAppointment.address }}</p>
+            <p class="text-gray-600">{{ selectedAppointment.city }}, {{ selectedAppointment.country }}</p>
+          </div>
+        </div>
+
+        <!-- Schedule -->
+        <div>
+          <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Schedule
+          </h4>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-gray-50 rounded-xl p-4 text-center">
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Date</div>
+              <div class="text-sm font-semibold text-gray-800">{{ formatDate(selectedAppointment.date) }}</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 text-center">
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Time</div>
+              <div class="text-sm font-semibold text-gray-800">{{ selectedAppointment.time }}</div>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-4 text-center">
+              <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Duration</div>
+              <div class="text-sm font-semibold text-gray-800">{{ selectedAppointment.estimatedDuration }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Types -->
+        <div>
+          <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            Audit Scope
+          </h4>
+          <div class="flex flex-wrap gap-2">
+            <span
+              *ngFor="let type of selectedAppointment.auditTypes"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 rounded-xl text-sm font-medium text-emerald-700">
+              <span>{{ getAuditTypeConfig(type).icon }}</span>
+              {{ getAuditTypeConfig(type).label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div>
+          <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            Contact Person
+          </h4>
+          <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Name</span>
+              <span class="font-medium text-gray-800">{{ selectedAppointment.contactName }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Phone</span>
+              <a [href]="'tel:' + selectedAppointment.contactPhone" class="font-medium text-emerald-600 hover:underline">
+                {{ selectedAppointment.contactPhone }}
+              </a>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">Email</span>
+              <a [href]="'mailto:' + selectedAppointment.contactEmail" class="font-medium text-emerald-600 hover:underline">
+                {{ selectedAppointment.contactEmail }}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div *ngIf="selectedAppointment.notes">
+          <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+            <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            Special Notes
+          </h4>
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <p class="text-sm text-amber-800">{{ selectedAppointment.notes }}</p>
+          </div>
+        </div>
+
+        <!-- EcoScore (if available) -->
+        <div *ngIf="selectedAppointment.ecoScore" class="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="text-sm font-semibold text-gray-800">Current EcoScore</h4>
+              <p class="text-xs text-gray-500">Based on preliminary assessment</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="relative w-16 h-16">
+                <svg class="w-16 h-16 transform -rotate-90">
+                  <circle cx="32" cy="32" r="28" stroke-width="4" fill="none" class="stroke-white"/>
+                  <circle
+                    cx="32" cy="32" r="28" stroke-width="4" fill="none"
+                    [class]="getScoreRingColor(selectedAppointment.ecoScore)"
+                    stroke-linecap="round"
+                    [attr.stroke-dasharray]="175.93"
+                    [attr.stroke-dashoffset]="175.93 - (175.93 * selectedAppointment.ecoScore / 100)"/>
+                </svg>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <span [class]="'text-xl font-bold ' + getScoreColor(selectedAppointment.ecoScore)">{{ selectedAppointment.ecoScore }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="sticky bottom-0 bg-gray-50 border-t border-gray-100 p-4 rounded-b-3xl flex items-center justify-between">
+        <button
+          (click)="closeDetails()"
+          class="px-6 py-2.5 rounded-xl text-gray-600 font-medium hover:bg-gray-100 transition-colors">
+          Close
+        </button>
+        <div class="flex gap-3">
+          <button class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white border border-emerald-200 text-emerald-700 font-medium hover:bg-emerald-50 transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Get Directions
+          </button>
+          <button class="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium shadow-lg shadow-emerald-500/25 hover:shadow-xl transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+            Start Audit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

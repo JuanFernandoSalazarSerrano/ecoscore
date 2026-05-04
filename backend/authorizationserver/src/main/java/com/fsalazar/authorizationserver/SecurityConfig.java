@@ -36,6 +36,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import com.fsalazar.authorizationserver.repository.CompanyRepository;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -58,6 +63,7 @@ public class SecurityConfig {
 				.authorizationServer();
 
 		http
+				.cors(Customizer.withDefaults())
 				.securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
 				.with(authorizationServerConfigurer, (authorizationServer) -> authorizationServer
 						.oidc(Customizer.withDefaults()) // Enable OpenID Connect 1.0
@@ -79,39 +85,72 @@ public class SecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
 			throws Exception {
 		http
+				.cors(Customizer.withDefaults())
+				.csrf(csrf -> csrf.ignoringRequestMatchers("/login"))
 				.authorizeHttpRequests((authorize) -> authorize
+						.requestMatchers("/main.css").permitAll()
 						.anyRequest().authenticated())
 				// Form login handles the redirect to the login page from the
 				// authorization server filter chain
-				.formLogin(Customizer.withDefaults());
+				.formLogin(
+					form -> form.loginPage("/login")
+					.defaultSuccessUrl("/companyhome", false)
+					.permitAll()
+				);
 
 		return http.build();
 	}
 
 	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+		configuration.setExposedHeaders(List.of("Authorization"));
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
+
+	@Bean
 	public UserDetailsService userDetailsService() {
+		
 		UserDetails userDetails = User.withDefaultPasswordEncoder()
 				.username("user")
 				.password("password")
 				.roles("USER")
 				.build();
 
-		return new InMemoryUserDetailsManager(userDetails);
+		UserDetails userDetails2 = User.withDefaultPasswordEncoder()
+		.username("Mackensy")
+		.password("contra")
+		.roles("USER")
+		.build();
+
+
+		return new InMemoryUserDetailsManager(userDetails, userDetails2);
 	}
 
 	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
 		RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("ecoscorefront")
-				.clientSecret("{noop}secret")
-				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+				.clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+				.redirectUri("http://localhost:4200/companyhome")
 				.redirectUri("https://oidcdebugger.com/debug")
 				.postLogoutRedirectUri("http://127.0.0.1:8080/")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+				.clientSettings(
+					ClientSettings.builder()
+					.requireAuthorizationConsent(true)
+					.requireProofKey(true)
+					.build())
 				.build();
 
 		return new InMemoryRegisteredClientRepository(oidcClient);

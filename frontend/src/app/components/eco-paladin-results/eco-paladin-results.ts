@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { TemperatureFetching } from '../../../services/temperature-fetching';
+import { Airesume } from '../airesume/airesume';
 
 type DeploymentStatus = 'Passed' | 'Warning' | 'Failed';
 
@@ -22,7 +24,7 @@ interface DeploymentRow {
 @Component({
   selector: 'app-eco-paladin-results',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, Airesume],
   templateUrl: './eco-paladin-results.html',
   styleUrl: './eco-paladin-results.css',
 })
