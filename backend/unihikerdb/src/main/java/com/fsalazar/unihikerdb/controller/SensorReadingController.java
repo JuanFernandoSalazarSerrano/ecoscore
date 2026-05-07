@@ -1,5 +1,6 @@
 package com.fsalazar.unihikerdb.controller;
 
+import com.fsalazar.unihikerdb.dto.AccelerometerReadingRequest;
 import com.fsalazar.unihikerdb.dto.InterviewAnswerRequest;
 import com.fsalazar.unihikerdb.dto.SensorReadingRequest;
 import com.fsalazar.unihikerdb.service.SensorReadingService;
@@ -11,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @RestController
 @RequestMapping("/api/sensor-readings")
@@ -20,6 +24,7 @@ public class SensorReadingController {
     private static final String MESSAGE = "message";
 
     private final SensorReadingService sensorReadingService;
+    private final List<List<BigDecimal>> accelerometerReadings = new CopyOnWriteArrayList<>();
 
     public SensorReadingController(SensorReadingService sensorReadingService) {
         this.sensorReadingService = sensorReadingService;
@@ -53,6 +58,32 @@ public class SensorReadingController {
                     MESSAGE, e.getMessage()
             ));
         }
+    }
+
+    @PostMapping("/accelerometer")
+    public ResponseEntity<Map<String, Object>> createAccelerometerReading(
+            @RequestBody AccelerometerReadingRequest request
+    ) {
+        if (request == null || request.values() == null || request.values().size() != 3) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    MESSAGE, "values must be a list of 3 numbers"
+            ));
+        }
+
+        for (BigDecimal value : request.values()) {
+            if (value == null) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        MESSAGE, "values must not contain nulls"
+                ));
+            }
+        }
+
+        accelerometerReadings.add(List.copyOf(request.values()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                MESSAGE, "Accelerometer reading saved",
+                "reading", request.values(),
+                "storedCount", accelerometerReadings.size()
+        ));
     }
 
     @GetMapping("/temperature")

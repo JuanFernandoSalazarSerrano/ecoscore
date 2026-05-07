@@ -42,7 +42,7 @@ export class EcoPaladinResults implements OnInit {
   readonly rows = signal<DeploymentRow[]>([
     {
       id: 'DEP-001',
-      module: 'Core API Gateway',
+      module: 'Materiales peligrosos',
       environment: 'Production',
       version: 'v4.12.0',
       deployedAt: '2026-03-17 08:40',
@@ -56,7 +56,7 @@ export class EcoPaladinResults implements OnInit {
     },
     {
       id: 'DEP-002',
-      module: 'ESG Portfolio Service',
+      module: 'Calidad del aire',
       environment: 'Production',
       version: 'v3.8.2',
       deployedAt: '2026-03-17 09:10',
@@ -84,7 +84,7 @@ export class EcoPaladinResults implements OnInit {
     },
     {
       id: 'DEP-004',
-      module: 'Sustainability Dashboard UI',
+      module: 'Gestión de residuos',
       environment: 'Production',
       version: 'v1.19.4',
       deployedAt: '2026-03-18 16:22',
@@ -98,7 +98,7 @@ export class EcoPaladinResults implements OnInit {
     },
     {
       id: 'DEP-005',
-      module: 'Data Export Pipeline',
+      module: 'Riesgo biológico',
       environment: 'Production',
       version: 'v5.3.1',
       deployedAt: '2026-03-19 06:30',
@@ -138,6 +138,20 @@ export class EcoPaladinResults implements OnInit {
       owner: 'Facilities Team',
       notes: 'Humidity affects thermal comfort and HVAC efficiency.',
     },
+    {
+      id: 'DEP-008',
+      module: 'Encuestas humanas',
+      environment: 'Facilities',
+      version: '-',
+      deployedAt: '2026-03-19 09:00',
+      status: 'Passed',
+      ecoScore: 90,
+      temperatureC: null,
+      humidity: 0,
+      carbonDelta: '-0.1%',
+      owner: 'Facilities Team',
+      notes: 'Humidity affects thermal comfort and HVAC efficiency.',
+    }
   ]);
 
   constructor(private readonly tempService: TemperatureFetching) {}
