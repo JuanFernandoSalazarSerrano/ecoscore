@@ -23,7 +23,7 @@ export class Airesume {
     this.aiResponse = '';
     this.isLoading = true;
 
-    const input = "{asas}\n\nUse only the ecological data in this JSON, with emphasis on Colombia ecological laws. If the JSON does not contain the needed detail, say so clearly and ask a short follow-up question. Always answer in spanish\n\nUser prompt: " + prompt.trim();
+    const input = "{report}\n\nUse only the ecological data in this JSON, with emphasis on Colombia ecological laws. If the JSON does not contain the needed detail, say so clearly and ask a short follow-up question. Always answer in spanish\n\nUser prompt: " + prompt.trim();
     this.messageHistory.update((history) => [...history, `User: ${input}`]);
 
     try {

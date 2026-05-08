@@ -25,6 +25,7 @@ public class SensorReadingController {
 
     private final SensorReadingService sensorReadingService;
     private final List<List<BigDecimal>> accelerometerReadings = new CopyOnWriteArrayList<>();
+    private static final String DECODER_SCRIPT = "/home/serrano/Desktop/ecoscore/unihikerkscripts1/decoder.py";
 
     public SensorReadingController(SensorReadingService sensorReadingService) {
         this.sensorReadingService = sensorReadingService;
@@ -119,6 +120,68 @@ public class SensorReadingController {
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(MESSAGE, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/calidadaire")
+    public ResponseEntity<Map<String, Object>> getCalidadAire() {
+        return runDecoderAndRespond("calidadaire");
+    }
+
+    @GetMapping("/riesgobiologico")
+    public ResponseEntity<Map<String, Object>> getRiesgoBiologico() {
+        return runDecoderAndRespond("riesgobiologico");
+    }
+
+    @GetMapping("/materialespeligrosos")
+    public ResponseEntity<Map<String, Object>> getMaterialesPeligrosos() {
+        return runDecoderAndRespond("materialespeligrosos");
+    }
+
+    @GetMapping("/gestionresiduos")
+    public ResponseEntity<Map<String, Object>> getGestionResiduos() {
+        return runDecoderAndRespond("gestionresiduos");
+    }
+
+    @GetMapping("/consumoenergetico")
+    public ResponseEntity<Map<String, Object>> getConsumoEnergetico() {
+        return runDecoderAndRespond("consumoenergetico");
+    }
+
+    @GetMapping("/biodiversidad")
+    public ResponseEntity<Map<String, Object>> getBiodiversidad() {
+        return runDecoderAndRespond("biodiversidad");
+    }
+
+    @GetMapping("/gestionagua")
+    public ResponseEntity<Map<String, Object>> getGestionAgua() {
+        return runDecoderAndRespond("gestionagua");
+    }
+
+    @GetMapping("/contaminacionauditiva")
+    public ResponseEntity<Map<String, Object>> getContaminacionAuditiva() {
+        return runDecoderAndRespond("contaminacionauditiva");
+    }
+
+    private ResponseEntity<Map<String, Object>> runDecoderAndRespond(String endpointName) {
+        try {
+            runDecoderScript();
+            return ResponseEntity.ok(Map.of(
+                    "endpoint", endpointName
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(MESSAGE, e.getMessage()));
+        }
+    }
+
+    private void runDecoderScript() throws Exception {
+        ProcessBuilder builder = new ProcessBuilder("python3", DECODER_SCRIPT);
+        builder.redirectErrorStream(true);
+        Process process = builder.start();
+        process.getInputStream().readAllBytes();
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new IllegalStateException("decoder.py failed with exit code " + exitCode);
         }
     }
 }

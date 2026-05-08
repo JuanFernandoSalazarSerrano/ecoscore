@@ -1,11 +1,5 @@
-from unihiker_k10 import screen
+from unihiker_k10 import screen, button, light
 import time
-
-from core import utils
-from core.state import state
-from core.navigation import move_down, select_item
-from core.input import btn_a, btn_b
-from modules import light_sensor, humidity, temperature, accelerometer, audio, encuesta
 
 # --- EcoScore palette (Frutiger Aero + eco glass style) ---
 SKY_TOP    = 0xD9F8FF
@@ -47,8 +41,17 @@ PAGE2 = [
 	("Contam. Auditiva", ENERGY_CLR),
 ]
 
-PAGES = [PAGE1, PAGE2]
-TOTAL_PAGES = len(PAGES)
+TOTAL_PAGES    = 2
+PAGES          = [PAGE1, PAGE2]
+ITEMS_PER_PAGE = 8
+
+# Mutable navigation state (dict avoids 'global' boilerplate in callbacks)
+state = {
+	"page":         0,     # current page index
+	"selected":     0,     # highlighted row within current page
+	"needs_redraw": True,
+	"pending_action": None,
+}
 
 
 # ---------------------------------------------------------------------------
@@ -177,7 +180,7 @@ def draw_footer(page_idx):
 
 	# Sub-label
 	screen.draw_text(
-		text=str(page_idx + 1) + "/" + str(TOTAL_PAGES),
+		text=f"{page_idx + 1}/{TOTAL_PAGES}",
 		x=148, y=fy + 7,
 		font_size=11,
 		color=0x3D8F75
@@ -201,60 +204,87 @@ def draw_menu_scene(page_idx=0, selected=0):
 	screen.show_draw()
 
 
-def run():
-	btn_a.event_pressed = lambda: move_down(state, PAGES)
-	btn_b.event_pressed = lambda: select_item(state, PAGES)
+# ---------------------------------------------------------------------------
+# Navigation helpers
+# ---------------------------------------------------------------------------
+def move_down():
+	"""Move selection one row down; wrap to next page or first row of first page."""
+	state["selected"] += 1
+	if state["selected"] >= ITEMS_PER_PAGE:
+		state["page"] = (state["page"] + 1) % TOTAL_PAGES
+		state["selected"] = 0
+	state["needs_redraw"] = True
 
-	screen.init(dir=2)
 
-	def run_module(fn):
-		prev_a, prev_b = utils.detach_callbacks(btn_a, btn_b)
-		try:
-			fn()
-		finally:
-			utils.restore_callbacks(btn_a, btn_b, prev_a, prev_b)
+def select_item():
+	label, _ = PAGES[state["page"]][state["selected"]]
+	state["pending_action"] = label
+
+
+def run_light_sensor():
+	prev_a = bt_a.event_pressed
+	prev_b = bt_b.event_pressed
+	bt_a.event_pressed = None
+	bt_b.event_pressed = None
+	try:
+		while True:
+			if bt_a.status():
+				while bt_a.status():
+					time.sleep(0.05)
+				state["needs_redraw"] = True
+				return
+			value = light.read()
+			screen.draw_rect(x=0, y=0, w=240, h=320, bcolor=SKY_TOP, fcolor=SKY_TOP)
+			screen.draw_text(text="Luz: " + str(value), x=10, y=20, font_size=24, color=DEEP_GREEN)
+			screen.draw_text(text="EcoScore", x=10, y=50, font_size=16, color=TEAL)
+			screen.show_draw()
+			for _ in range(10):
+				if bt_a.status():
+					while bt_a.status():
+						time.sleep(0.05)
+					state["needs_redraw"] = True
+					return
+				time.sleep(0.1)
+	finally:
+		bt_a.event_pressed = prev_a
+		bt_b.event_pressed = prev_b
+
+
+def show_not_ready(label):
+	screen.draw_rect(x=0, y=0, w=240, h=320, bcolor=SKY_TOP, fcolor=SKY_TOP)
+	screen.draw_text(text="Sin script", x=10, y=20, font_size=18, color=DEEP_GREEN)
+	screen.draw_text(text=label, x=10, y=45, font_size=12, color=TEAL)
+	screen.show_draw()
+	time.sleep(1)
+
+
+# ---------------------------------------------------------------------------
+# Button callbacks  —  A = DOWN  |  B = SELECT
+# ---------------------------------------------------------------------------
+bt_a = button(button.a)
+bt_b = button(button.b)
+
+bt_a.event_pressed = lambda: move_down()
+bt_b.event_pressed = lambda: select_item()
+
+
+# ---------------------------------------------------------------------------
+# Entry point
+# ---------------------------------------------------------------------------
+screen.init(dir=2)
+
+while True:
+	if state["pending_action"]:
+		label = state["pending_action"]
+		state["pending_action"] = None
+		if label == "Luz Ambiental":
+			run_light_sensor()
+		else:
+			show_not_ready(label)
 			state["needs_redraw"] = True
 
-	def show_not_ready(label):
-		utils.clear_screen(SKY_TOP)
-		screen.draw_text(text="Sin script", x=10, y=20, font_size=18, color=DEEP_GREEN)
-		screen.draw_text(text=label, x=10, y=45, font_size=12, color=TEAL)
-		screen.show_draw()
-		for _ in range(10):
-			if utils.pressed(btn_a):
-				return
-			time.sleep(0.1)
+	if state["needs_redraw"]:
+		draw_menu_scene(page_idx=state["page"], selected=state["selected"])
+		state["needs_redraw"] = False
 
-	while True:
-		if state["pending_action"]:
-			label = state["pending_action"]
-			state["pending_action"] = None
-
-			if label == "Temperatura °C":
-				state["temp_unit"] = "C"
-				run_module(temperature.run)
-			elif label == "Temperatura °F":
-				state["temp_unit"] = "F"
-				run_module(temperature.run)
-			elif label == "Humedad":
-				run_module(humidity.run)
-			elif label == "Acelerometro":
-				run_module(accelerometer.run)
-			elif label == "Luz Ambiental":
-				run_module(light_sensor.run)
-			elif label == "Entrevista":
-				run_module(encuesta.run)
-			elif label == "Audio":
-				run_module(audio.run)
-			else:
-				run_module(lambda: show_not_ready(label))
-
-		if state["needs_redraw"]:
-			draw_menu_scene(page_idx=state["page"], selected=state["selected"])
-			state["needs_redraw"] = False
-
-		time.sleep(0.05)
-
-
-if __name__ == "__main__":
-	run()
+	time.sleep(0.05)
