@@ -3,8 +3,12 @@
 server.py — run on the PC at 192.168.80.13:8000
 
 Receives frames from the UniHiker K10 and saves:
-- raw payload to ./frames/raw/
-- decoded image to ./frames/decoded/
+- raw payload to ./frames/raw/ (or per-sensor subfolders)
+- decoded image to ./frames/decoded/ (or per-sensor subfolders)
+
+Endpoints:
+- POST /upload (default)
+- POST /<sensor> or /upload/<sensor> for sensor-specific folders
 
 Install:
     pip install pillow numpy
@@ -14,10 +18,11 @@ import cgi
 import os
 import sys
 import time
+from urllib.parse import urlparse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageEnhance
 
 SAVE_DIR = "frames"
 RAW_DIR = os.path.join(SAVE_DIR, "raw")
@@ -28,13 +33,35 @@ os.makedirs(DEC_DIR, exist_ok=True)
 
 MAX_FRAMES = 500
 
+SENSOR_ENDPOINTS = {
+    "calidadaire",
+    "riesgobiologico",
+    "materialespeligrosos",
+    "gestionresiduos",
+    "consumoenergetico",
+    "biodiversidad",
+    "gestionagua",
+    "contaminacionauditiva",
+}
+
+OFFSET_CACHE = {}
+
 # The frame from your K10 sample decodes correctly with this geometry.
 WIDTH = 240
 HEIGHT = 320
+BPP = 2
+FRAME_BYTES = WIDTH * HEIGHT * BPP
+
+# If you already know the correct offset set this; None = auto-detect.
+FORCE_SKIP = None
 
 # Set to 0 to keep portrait.
 # Set to 90 or 270 if you want a landscape output file too.
 ROTATE_DEG = 90
+
+WB_SCALE = np.array([1.15, 1.00, 0.80], dtype=np.float32)
+SATURATION = 1.15
+CONTRAST = 1.05
 
 
 def extract_frame_bytes(handler):
@@ -74,12 +101,118 @@ def strip_trailing_crlf(data):
     return data
 
 
+def rgb565_to_rgb888(data, offset):
+    chunk = data[offset : offset + FRAME_BYTES]
+    arr = np.frombuffer(chunk, dtype="<u2").reshape((HEIGHT, WIDTH))
+    r = ((arr >> 11) & 0x1F) * (255 / 31)
+    g = ((arr >> 5) & 0x3F) * (255 / 63)
+    b = (arr & 0x1F) * (255 / 31)
+    rgb = np.dstack((r, g, b)).astype(np.float32)
+    return rgb
+
+
+def colour_correct(rgb):
+    rgb = rgb * WB_SCALE
+    rgb = np.clip(rgb, 0, 255).astype(np.uint8)
+    return rgb
+
+
+def wrap_score(rgb):
+    top = rgb[0, :, :].astype(np.float32)
+    bottom = rgb[-1, :, :].astype(np.float32)
+    return float(np.mean(np.abs(top - bottom)))
+
+
+def find_best_offset(data):
+    best_offset = 0
+    best_score = float("inf")
+
+    max_start = len(data) - FRAME_BYTES
+    candidates = list(range(0, min(513, max_start + 1), BPP))
+
+    for off in candidates:
+        rgb = rgb565_to_rgb888(data, off)
+        score = wrap_score(rgb)
+        if score < best_score:
+            best_score = score
+            best_offset = off
+
+    return best_offset
+
+
+def make_image(rgb_raw, rotate):
+    img = Image.fromarray(rgb_raw, mode="RGB")
+    if rotate:
+        img = img.rotate(rotate, expand=True)
+    img = ImageEnhance.Color(img).enhance(SATURATION)
+    img = ImageEnhance.Contrast(img).enhance(CONTRAST)
+    return img
+
+
+def ensure_dirs(sensor):
+    if sensor:
+        raw_dir = os.path.join(RAW_DIR, sensor)
+        dec_dir = os.path.join(DEC_DIR, sensor)
+    else:
+        raw_dir = RAW_DIR
+        dec_dir = DEC_DIR
+    os.makedirs(raw_dir, exist_ok=True)
+    os.makedirs(dec_dir, exist_ok=True)
+    return raw_dir, dec_dir
+
+
+def resolve_endpoint(path):
+    route = urlparse(path).path.strip("/")
+    if route == "upload":
+        return None, True
+    if route.startswith("upload/"):
+        route = route[len("upload/") :]
+    if route in SENSOR_ENDPOINTS:
+        return route, True
+    return None, False
+
+
+def save_decoded_rgb565(data, dec_dir, base, cache_key):
+    if len(data) < FRAME_BYTES:
+        return None, "too small for RGB565"
+
+    if FORCE_SKIP is not None:
+        offset = FORCE_SKIP
+    else:
+        offset = OFFSET_CACHE.get(cache_key)
+        if offset is None:
+            offset = find_best_offset(data)
+            OFFSET_CACHE[cache_key] = offset
+
+    rgb_raw = colour_correct(rgb565_to_rgb888(data, offset))
+    img = make_image(rgb_raw, rotate=ROTATE_DEG)
+    out_path = os.path.join(dec_dir, base + ".png")
+    img.save(out_path)
+    return out_path, None
+
+
+def cleanup_raw_dir(raw_dir):
+    if MAX_FRAMES <= 0:
+        return
+    raw_files = sorted(
+        [
+            os.path.join(raw_dir, x)
+            for x in os.listdir(raw_dir)
+            if x.endswith(".bin")
+        ],
+        key=os.path.getctime,
+    )
+    while len(raw_files) > MAX_FRAMES:
+        os.remove(raw_files.pop(0))
+
+
 class FrameHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print(f"[{time.strftime('%H:%M:%S')}] {fmt % args}")
 
     def do_POST(self):
-        if self.path != "/upload":
+        sensor, ok = resolve_endpoint(self.path)
+        if not ok:
             self.send_response(404)
             self.end_headers()
             self.wfile.write(b"Not found")
@@ -98,7 +231,9 @@ class FrameHandler(BaseHTTPRequestHandler):
         idx = int(time.time() * 1000) % 1000000
         base = f"frame_{ts}_{idx:06d}"
 
-        raw_path = os.path.join(RAW_DIR, base + ".bin")
+        raw_dir, dec_dir = ensure_dirs(sensor)
+
+        raw_path = os.path.join(raw_dir, base + ".bin")
         with open(raw_path, "wb") as f:
             f.write(data)
 
@@ -106,22 +241,32 @@ class FrameHandler(BaseHTTPRequestHandler):
 
         # If the payload is already encoded, save directly.
         if data[:2] == b"\xff\xd8":
-            jpg_path = os.path.join(DEC_DIR, base + ".jpg")
+            jpg_path = os.path.join(dec_dir, base + ".jpg")
             with open(jpg_path, "wb") as f:
                 f.write(data)
             saved.append(f"jpg={jpg_path}")
 
         elif data[:8] == b"\x89PNG\r\n\x1a\n":
-            png_path = os.path.join(DEC_DIR, base + ".png")
+            png_path = os.path.join(dec_dir, base + ".png")
             with open(png_path, "wb") as f:
                 f.write(data)
             saved.append(f"png={png_path}")
 
         elif data[:2] == b"BM":
-            bmp_path = os.path.join(DEC_DIR, base + ".bmp")
+            bmp_path = os.path.join(dec_dir, base + ".bmp")
             with open(bmp_path, "wb") as f:
                 f.write(data)
             saved.append(f"bmp={bmp_path}")
+
+        else:
+            cache_key = sensor or "__default__"
+            decoded_path, decode_err = save_decoded_rgb565(
+                data, dec_dir, base, cache_key
+            )
+            if decoded_path:
+                saved.append(f"png={decoded_path}")
+            else:
+                saved.append(f"decode_error={decode_err}")
 
         print(f"  Saved {len(data):,} bytes -> " + " | ".join(saved))
 
@@ -129,18 +274,7 @@ class FrameHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"OK")
 
-        # Optional cleanup
-        if MAX_FRAMES > 0:
-            raw_files = sorted(
-                [
-                    os.path.join(RAW_DIR, x)
-                    for x in os.listdir(RAW_DIR)
-                    if x.endswith(".bin")
-                ],
-                key=os.path.getctime,
-            )
-            while len(raw_files) > MAX_FRAMES:
-                os.remove(raw_files.pop(0))
+        cleanup_raw_dir(raw_dir)
 
 
 if __name__ == "__main__":

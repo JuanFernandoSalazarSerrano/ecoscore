@@ -28,7 +28,7 @@ INTERVAL_S = 1
 MENU_LABEL = "Calidad Aire"
 
 PAGE2_ENDPOINTS = {
-    "Calidad Aire": "http://192.168.80.13:8000/calidadaire",
+    "Calidad Aire": "http://192.168.80.13:8000/upload", #calidadaire
     "Riesgo Biologico": "http://192.168.80.13:8000/riesgobiologico",
     "Mat. Peligrosos": "http://192.168.80.13:8000/materialespeligrosos",
     "Gestion Residuos": "http://192.168.80.13:8000/gestionresiduos",
