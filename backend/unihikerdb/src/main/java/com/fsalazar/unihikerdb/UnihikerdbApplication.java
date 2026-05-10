@@ -20,6 +20,7 @@ public class UnihikerdbApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/api/sensor-readings/temperature").allowedOrigins("http://localhost:4200");
 				registry.addMapping("/api/sensor-readings/humidity").allowedOrigins("http://localhost:4200");
+				registry.addMapping("/api/audit/**").allowedOrigins("http://localhost:4200");
 			}
 		};
 	}

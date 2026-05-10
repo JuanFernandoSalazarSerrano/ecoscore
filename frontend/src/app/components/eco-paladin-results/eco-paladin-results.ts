@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { catchError, of } from 'rxjs';
+import { AuditResponse, AuditService } from '../../services/audit.service';
 
 interface ReportData {
   id: string;
@@ -55,6 +57,8 @@ interface ParsedQuestion {
   styleUrl: './eco-paladin-results.css',
 })
 export class EcoPaladinResults {
+  private readonly companyName = 'uao';
+
   reportData: ReportData = {
     id: '15',
     device_id: 'DEVICE-003',
@@ -88,6 +92,13 @@ export class EcoPaladinResults {
     contaminacion_auditiva_descripcion: 'Acoustic contamination remains below minimum thresholds.',
     created_at: '2026-05-09 09:12:03'
   };
+
+  constructor(
+    private readonly auditService: AuditService,
+    private readonly cdr: ChangeDetectorRef,
+  ) {
+    this.loadAudit();
+  }
 
   get parsedAccelerometer(): ParsedAccelerometer {
     try {
@@ -184,5 +195,159 @@ export class EcoPaladinResults {
   downloadReport(): void {
     // Implement PDF download logic
     console.log('Downloading report...');
+  }
+
+  private loadAudit(): void {
+    this.auditService
+      .getLatestAudit(this.companyName)
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to load audit report', error);
+          return of(null);
+        })
+      )
+      .subscribe((audit) => {
+        if (!audit) {
+          return;
+        }
+
+        this.reportData = this.mapAuditToReport(audit);
+        this.cdr.detectChanges();
+      });
+  }
+
+  private mapAuditToReport(audit: AuditResponse): ReportData {
+    return {
+      id: this.valueToString(audit.id),
+      device_id: audit.deviceId ?? '',
+      temperatura_celsius: this.formatNumber(audit.tempC),
+      temperatura_descripcion: audit.tempCDesc ?? '',
+      temperatura_fahrenheit: this.formatNumber(audit.tempF),
+      fahrenheit_descripcion: audit.tempFDesc ?? '',
+      humedad: this.formatNumber(audit.humidity),
+      humedad_descripcion: audit.humidityDesc ?? '',
+      acelerometro: this.formatAccelerometer(audit.accelerometer),
+      acelerometro_descripcion: audit.accelerometerDesc ?? '',
+      luz: this.formatLight(audit.light),
+      luz_descripcion: audit.lightDesc ?? '',
+      preguntas: this.formatQuestions(audit.questions),
+      preguntas_descripcion: audit.questionsDesc ?? '',
+      calidad_aire_imagen: this.imagePath('calidadaire'),
+      calidad_aire_descripcion: audit.calidadaireDesc ?? '',
+      riesgo_biologico_imagen: this.imagePath('riesgobiologico'),
+      riesgo_biologico_descripcion: audit.riesgobiologicoDesc ?? '',
+      materiales_peligrosos_imagen: this.imagePath('materialespeligrosos'),
+      materiales_peligrosos_descripcion: audit.materialespeligrososDesc ?? '',
+      gestion_residuos_imagen: this.imagePath('gestionresiduos'),
+      gestion_residuos_descripcion: audit.gestionresiduosDesc ?? '',
+      consumo_energetico: this.formatNumber(audit.consumoenergetico),
+      consumo_energetico_descripcion: audit.consumoenergeticoDesc ?? '',
+      biodiversidad_imagen: this.imagePath('biodiversidad'),
+      biodiversidad_descripcion: audit.biodiversidadDesc ?? '',
+      gestion_agua_imagen: this.imagePath('gestionagua'),
+      gestion_agua_descripcion: audit.gestionaguaDesc ?? '',
+      contaminacion_auditiva_imagen: this.imagePath('contaminacionauditiva'),
+      contaminacion_auditiva_descripcion: audit.contaminacionauditivaDesc ?? '',
+      created_at: audit.createdAt ?? '',
+    };
+  }
+
+  private formatNumber(value: number | string | null): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    const num = Number(value);
+    if (Number.isFinite(num)) {
+      return num.toFixed(2);
+    }
+
+    return this.valueToString(value);
+  }
+
+  private formatLight(value: string | null): string {
+    const base = this.valueToString(value);
+    if (!base) {
+      return '';
+    }
+
+    if (/^\d+(\.\d+)?$/.test(base)) {
+      return `${base} lux`;
+    }
+
+    return base;
+  }
+
+  private formatQuestions(value: string | null): string {
+    if (!value) {
+      return '[]';
+    }
+
+    const trimmed = value.trim();
+    if (trimmed.startsWith('[')) {
+      return trimmed;
+    }
+
+    const digits = trimmed.replace(/[^01]/g, '');
+    if (!digits) {
+      return '[]';
+    }
+
+    const values = digits.split('').map((digit) => Number(digit));
+    return JSON.stringify(values);
+  }
+
+  private formatAccelerometer(value: string | null): string {
+    if (!value) {
+      return '{"x":0,"y":0,"z":0}';
+    }
+
+    const trimmed = value.trim();
+    try {
+      const parsed = JSON.parse(trimmed);
+      return this.formatAccelerometerValue(parsed);
+    } catch {
+      return this.formatAccelerometerValue(trimmed);
+    }
+  }
+
+  private formatAccelerometerValue(value: unknown): string {
+    if (Array.isArray(value) && value.length >= 3) {
+      return JSON.stringify({
+        x: this.toNumber(value[0]),
+        y: this.toNumber(value[1]),
+        z: this.toNumber(value[2]),
+      });
+    }
+
+    if (value && typeof value === 'object') {
+      const anyValue = value as { x?: unknown; y?: unknown; z?: unknown };
+      if (anyValue.x !== undefined || anyValue.y !== undefined || anyValue.z !== undefined) {
+        return JSON.stringify({
+          x: this.toNumber(anyValue.x),
+          y: this.toNumber(anyValue.y),
+          z: this.toNumber(anyValue.z),
+        });
+      }
+    }
+
+    return '{"x":0,"y":0,"z":0}';
+  }
+
+  private toNumber(value: unknown): number {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  private valueToString(value: unknown): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    return String(value);
+  }
+
+  private imagePath(folder: string): string {
+    return `/${folder}/3.png`;
   }
 }

@@ -118,7 +118,6 @@ camera.init()
 print("Camera ready.")
 time.sleep(0.5)
 
-draw_camera_layout()
 update_status(MENU_LABEL, "starting", 0, "init", "camera ready")
 
 # ── Step 2: WiFi after hardware is stable ──────────────────────────────────

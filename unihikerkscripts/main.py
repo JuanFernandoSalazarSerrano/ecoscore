@@ -185,6 +185,52 @@ def draw_footer(page_idx):
 
 
 # ---------------------------------------------------------------------------
+# Startup logo
+# ---------------------------------------------------------------------------
+def draw_logo_card():
+	screen.draw_rect(x=18, y=36, w=204, h=240, bcolor=0xE8FFF2, fcolor=0xE8FFF2)
+	screen.draw_rect(x=22, y=40, w=196, h=232, bcolor=0xF7FFFB, fcolor=0xF7FFFB)
+
+
+def draw_score_ring(cx, cy):
+	screen.set_width(width=4)
+	screen.draw_circle(x=cx, y=cy, r=52, bcolor=EMERALD)
+	screen.draw_circle(x=cx, y=cy, r=45, bcolor=LIME, fcolor=LIME)
+	screen.draw_circle(x=cx, y=cy, r=36, bcolor=WHITE, fcolor=WHITE)
+	screen.set_width(width=1)
+
+
+def draw_leaf_icon(cx, cy):
+	screen.draw_circle(x=cx - 12, y=cy + 2, r=11, bcolor=EMERALD, fcolor=EMERALD)
+	screen.draw_circle(x=cx + 8, y=cy - 8, r=12, bcolor=DEEP_GREEN, fcolor=DEEP_GREEN)
+	screen.draw_circle(x=cx + 2, y=cy + 10, r=9, bcolor=TEAL, fcolor=TEAL)
+
+	screen.set_width(width=2)
+	screen.draw_line(x0=cx - 14, y0=cy + 20, x1=cx + 16, y1=cy - 12, color=WHITE)
+	screen.set_width(width=1)
+
+
+def draw_brand_text():
+	screen.draw_text(text="Eco", x=66, y=192, font_size=24, color=DEEP_GREEN)
+	screen.draw_text(text="Score", x=112, y=192, font_size=24, color=TEAL)
+	screen.draw_text(text="MODULO PALADIN", x=70, y=220, font_size=11, color=0x3D8F75)
+
+
+def draw_logo_scene():
+	draw_gradient_background()
+	draw_logo_card()
+	draw_score_ring(120, 115)
+	draw_leaf_icon(120, 115)
+	draw_brand_text()
+	screen.show_draw()
+
+
+def show_startup_logo(duration_s=2.0):
+	draw_logo_scene()
+	time.sleep(duration_s)
+
+
+# ---------------------------------------------------------------------------
 # Full scene render
 # ---------------------------------------------------------------------------
 def draw_menu_scene(page_idx=0, selected=0):
@@ -206,6 +252,8 @@ def run():
 	btn_b.event_pressed = lambda: select_item(state, PAGES)
 
 	screen.init(dir=2)
+	show_startup_logo(2.0)
+	state["needs_redraw"] = True
 
 	def run_module(fn):
 		prev_a, prev_b = utils.detach_callbacks(btn_a, btn_b)

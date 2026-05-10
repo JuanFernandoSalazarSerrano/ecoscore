@@ -8,6 +8,7 @@ import { SignupComponent } from './components/signup/signup';
 import { SolicitationFormComponent } from './components/solicitationform/solicitationform';
 import { Paladinappointments } from './components/paladinappointments/paladinappointments';
 import { Reportcomplete } from './components/reportcomplete/reportcomplete';
+import { Paladinbuildreport } from './components/paladinbuildreport/paladinbuildreport';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,7 @@ export const routes: Routes = [
   { path: 'eco-paladin-results', component: EcoPaladinResults },
   { path: 'reportcomplete', component: Reportcomplete },
   { path: 'paladinappointments', component: Paladinappointments },
+  { path: 'paladinbuildreport', component: Paladinbuildreport },
   { path: 'solicitation', component: SolicitationFormComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },

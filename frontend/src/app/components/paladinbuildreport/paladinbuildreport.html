@@ -1,1 +1,636 @@
-<p>paladinbuildreport works!</p>
+<!-- Organic Background with Flowing Shapes -->
+<div class="fixed inset-0 -z-10 overflow-hidden">
+  <!-- Base gradient -->
+  <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 via-white to-sky-50"></div>
+
+  <!-- Animated gradient blurs -->
+  <div class="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-emerald-200/40 to-teal-200/30 rounded-full blur-3xl animate-pulse"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-sky-200/30 to-cyan-200/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+  <div class="absolute top-1/2 left-0 w-[400px] h-[400px] bg-gradient-to-br from-green-200/20 to-emerald-100/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+
+  <!-- Flowing SVG Wave -->
+  <svg class="absolute bottom-0 left-0 w-full h-64 opacity-30" viewBox="0 0 1440 320" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="waveGradientBuild" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3" />
+        <stop offset="50%" style="stop-color:#14b8a6;stop-opacity:0.2" />
+        <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.3" />
+      </linearGradient>
+    </defs>
+    <path fill="url(#waveGradientBuild)" d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,165.3C672,171,768,213,864,213.3C960,213,1056,171,1152,149.3C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+  </svg>
+
+  <!-- Decorative leaf elements -->
+  <svg class="absolute top-20 right-20 w-16 h-16 text-emerald-300/40 rotate-12" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+  </svg>
+  <svg class="absolute bottom-40 left-10 w-12 h-12 text-teal-300/30 -rotate-45" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17,8C8,10 5.9,16.17 3.82,21.34L5.71,22L6.66,19.7C7.14,19.87 7.64,20 8,20C19,20 22,3 22,3C21,5 14,5.25 9,6.25C4,7.25 2,11.5 2,13.5C2,15.5 3.75,17.25 3.75,17.25C7,8 17,8 17,8Z"/>
+  </svg>
+</div>
+
+<!-- Floating Navigation -->
+<nav class="sticky top-4 z-50 mx-4 lg:mx-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">ecoPaladin</span>
+            <span class="text-sm text-gray-500 block -mt-1">Report Builder</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <button (click)="clearForm()" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+            Clear Form
+          </button>
+          <button (click)="generateReport()" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105">
+            Generate Report
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+
+  <!-- Page Header -->
+  <div class="text-center mb-12">
+    <div class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-full mb-4">
+      <svg class="w-4 h-4 text-emerald-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+      </svg>
+      <span class="text-sm font-medium text-emerald-700">Build New Report</span>
+    </div>
+    <h1 class="text-4xl font-bold text-gray-900 mb-3">Environmental Report Builder</h1>
+    <p class="text-lg text-gray-600 max-w-2xl mx-auto">Fill in the sensor data and add descriptions for each measurement to generate a comprehensive environmental audit report.</p>
+  </div>
+
+  <!-- Device ID Section -->
+  <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6 mb-8">
+    <div class="flex items-center space-x-3 mb-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Device Information</h2>
+        <p class="text-sm text-gray-500">Enter the monitoring device identifier</p>
+      </div>
+    </div>
+    <input
+      type="text"
+      [(ngModel)]="reportData.device_id"
+      placeholder="e.g., DEVICE-001"
+      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-lg font-mono"
+    />
+  </div>
+
+  <!-- Temperature & Climate Section -->
+  <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6 mb-8">
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Temperature & Climate</h2>
+        <p class="text-sm text-gray-500">Record temperature and humidity readings</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Temperature Celsius -->
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">Temperature (Celsius)</label>
+        <div class="relative">
+          <input
+            type="number"
+            [(ngModel)]="reportData.temp_c"
+            step="0.01"
+            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+          />
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">°C</span>
+        </div>
+        <textarea
+          [(ngModel)]="reportData.temp_c_desc"
+          placeholder="Describe temperature conditions in Celsius..."
+          rows="3"
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+        ></textarea>
+      </div>
+
+      <!-- Temperature Fahrenheit -->
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">Temperature (Fahrenheit)</label>
+        <div class="relative">
+          <input
+            type="number"
+            [(ngModel)]="reportData.temp_f"
+            step="0.01"
+            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+          />
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">°F</span>
+        </div>
+        <textarea
+          [(ngModel)]="reportData.temp_f_desc"
+          placeholder="Describe temperature conditions in Fahrenheit..."
+          rows="3"
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+        ></textarea>
+      </div>
+
+      <!-- Humidity -->
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">Humidity</label>
+        <div class="relative">
+          <input
+            type="number"
+            [(ngModel)]="reportData.humidity"
+            step="0.01"
+            min="0"
+            max="100"
+            class="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+          />
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">%</span>
+        </div>
+        <textarea
+          [(ngModel)]="reportData.humidity_desc"
+          placeholder="Describe humidity levels and conditions..."
+          rows="3"
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Accelerometer & Light Section -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <!-- Accelerometer -->
+    <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6">
+      <div class="flex items-center space-x-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Accelerometer</h2>
+          <p class="text-sm text-gray-500">X, Y, Z axis measurements</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-4 mb-4">
+        <div class="space-y-2">
+          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide">X Axis</label>
+          <input
+            type="number"
+            [value]="parsedAccelerometer.x"
+            (input)="updateAccelerometer('x', $any($event.target).value)"
+            step="0.01"
+            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-center font-mono"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Y Axis</label>
+          <input
+            type="number"
+            [value]="parsedAccelerometer.y"
+            (input)="updateAccelerometer('y', $any($event.target).value)"
+            step="0.01"
+            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-center font-mono"
+          />
+        </div>
+        <div class="space-y-2">
+          <label class="block text-xs font-medium text-gray-500 uppercase tracking-wide">Z Axis</label>
+          <input
+            type="number"
+            [value]="parsedAccelerometer.z"
+            (input)="updateAccelerometer('z', $any($event.target).value)"
+            step="0.01"
+            class="w-full px-3 py-2.5 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-center font-mono"
+          />
+        </div>
+      </div>
+      <textarea
+        [(ngModel)]="reportData.accelerometer_desc"
+        placeholder="Describe device stability and movement data..."
+        rows="3"
+        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+      ></textarea>
+    </div>
+
+    <!-- Light -->
+    <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6">
+      <div class="flex items-center space-x-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Light Intensity</h2>
+          <p class="text-sm text-gray-500">Ambient lighting measurement</p>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        [(ngModel)]="reportData.light"
+        placeholder="e.g., 650 lux"
+        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none mb-4"
+      />
+      <textarea
+        [(ngModel)]="reportData.light_desc"
+        placeholder="Describe lighting conditions..."
+        rows="3"
+        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+      ></textarea>
+    </div>
+  </div>
+
+  <!-- Energy Consumption -->
+  <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6 mb-8">
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Energy Consumption</h2>
+        <p class="text-sm text-gray-500">Power usage measurement</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">Consumption Value</label>
+        <div class="relative">
+          <input
+            type="number"
+            [(ngModel)]="reportData.consumoenergetico"
+            step="0.01"
+            class="w-full px-4 py-3 pr-16 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
+          />
+          <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">kWh</span>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+          [(ngModel)]="reportData.consumoenergetico_desc"
+          placeholder="Describe energy consumption analysis..."
+          rows="2"
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+        ></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluation Questions -->
+  <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6 mb-8">
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Evaluation Questions</h2>
+        <p class="text-sm text-gray-500">Environmental compliance checklist</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div *ngFor="let question of questionLabels; let i = index" class="flex items-center justify-between p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+        <span class="text-sm text-gray-700">{{ question }}</span>
+        <div class="flex items-center space-x-2">
+          <button
+            (click)="updateQuestion(i, true)"
+            [class]="parsedQuestions[i] ? 'bg-emerald-500 text-white' : 'bg-gray-200 text-gray-600'"
+            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          >
+            Yes
+          </button>
+          <button
+            (click)="updateQuestion(i, false)"
+            [class]="!parsedQuestions[i] ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-600'"
+            class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          >
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <textarea
+      [(ngModel)]="reportData.questions_desc"
+      placeholder="Provide additional notes about the evaluation results..."
+      rows="3"
+      class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-sm"
+    ></textarea>
+  </div>
+
+  <!-- Environmental Assessments with Images -->
+  <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6 mb-8">
+    <div class="flex items-center space-x-3 mb-6">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900">Environmental Assessments</h2>
+        <p class="text-sm text-gray-500">Upload images and add descriptions for each category</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Air Quality -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-sky-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Air Quality</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.calidadaire" [src]="reportData.calidadaire" class="w-full h-full object-cover" alt="Air Quality">
+          <div *ngIf="!reportData.calidadaire" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'calidadaire', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.calidadaire"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.calidadaire_desc"
+          placeholder="Describe air quality..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Biological Risk -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Biological Risk</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.riesgobiologico" [src]="reportData.riesgobiologico" class="w-full h-full object-cover" alt="Biological Risk">
+          <div *ngIf="!reportData.riesgobiologico" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'riesgobiologico', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.riesgobiologico"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.riesgobiologico_desc"
+          placeholder="Describe biological risk..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Hazardous Materials -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Hazardous Materials</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.materialespeligrosos" [src]="reportData.materialespeligrosos" class="w-full h-full object-cover" alt="Hazardous Materials">
+          <div *ngIf="!reportData.materialespeligrosos" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'materialespeligrosos', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.materialespeligrosos"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.materialespeligrosos_desc"
+          placeholder="Describe hazardous materials..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Waste Management -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Waste Management</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.gestionresiduos" [src]="reportData.gestionresiduos" class="w-full h-full object-cover" alt="Waste Management">
+          <div *ngIf="!reportData.gestionresiduos" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'gestionresiduos', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.gestionresiduos"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.gestionresiduos_desc"
+          placeholder="Describe waste management..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Second Row of Environmental Assessments -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+      <!-- Biodiversity -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Biodiversity</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.biodiversidad" [src]="reportData.biodiversidad" class="w-full h-full object-cover" alt="Biodiversity">
+          <div *ngIf="!reportData.biodiversidad" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'biodiversidad', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.biodiversidad"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.biodiversidad_desc"
+          placeholder="Describe biodiversity..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Water Management -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Water Management</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.gestionagua" [src]="reportData.gestionagua" class="w-full h-full object-cover" alt="Water Management">
+          <div *ngIf="!reportData.gestionagua" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'gestionagua', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.gestionagua"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.gestionagua_desc"
+          placeholder="Describe water management..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Noise Pollution -->
+      <div class="space-y-3">
+        <div class="flex items-center space-x-2 mb-2">
+          <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Noise Pollution</span>
+        </div>
+        <div class="relative aspect-video rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 overflow-hidden group hover:border-emerald-400 transition-colors">
+          <img *ngIf="reportData.contaminacionauditiva" [src]="reportData.contaminacionauditiva" class="w-full h-full object-cover" alt="Noise Pollution">
+          <div *ngIf="!reportData.contaminacionauditiva" class="absolute inset-0 flex flex-col items-center justify-center">
+            <svg class="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-xs text-gray-500">Click to upload</span>
+          </div>
+          <input type="file" accept="image/*" (change)="onImageSelected({key: 'contaminacionauditiva', label: '', type: 'image', icon: '', value: '', description: '', placeholder: ''}, $event)" class="absolute inset-0 opacity-0 cursor-pointer">
+        </div>
+        <input
+          type="text"
+          [(ngModel)]="reportData.contaminacionauditiva"
+          placeholder="Image path..."
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none text-xs"
+        />
+        <textarea
+          [(ngModel)]="reportData.contaminacionauditiva_desc"
+          placeholder="Describe noise pollution..."
+          rows="2"
+          class="w-full px-3 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none resize-none text-xs"
+        ></textarea>
+      </div>
+
+      <!-- Empty placeholder for grid alignment -->
+      <div class="hidden lg:block"></div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-col sm:flex-row gap-4 justify-center mt-12 mb-8">
+    <button (click)="clearForm()" class="px-8 py-4 text-gray-600 font-semibold rounded-2xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all duration-300">
+      Clear All Fields
+    </button>
+    <button (click)="generateReport()" class="px-8 py-4 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-2xl shadow-xl shadow-emerald-500/30 hover:shadow-emerald-500/50 transition-all duration-300 hover:scale-105 flex items-center justify-center space-x-2">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      <span>Generate Report</span>
+    </button>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="relative mt-16">
+  <div class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 text-center">
+      <div class="flex items-center justify-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <span class="text-2xl font-bold">ecoPaladin</span>
+      </div>
+      <p class="text-emerald-100 text-sm">Environmental Monitoring & Audit Platform</p>
+      <p class="text-emerald-200/60 text-xs mt-4">Powered by ecoPaladin Audit Engine v2.0</p>
+    </div>
+  </div>
+</footer>
