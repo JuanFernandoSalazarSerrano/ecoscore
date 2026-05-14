@@ -5,7 +5,22 @@ from core import utils
 from core.state import state
 from core.navigation import move_down, select_item
 from core.input import btn_a, btn_b
-from modules import light_sensor, humidity, temperature, accelerometer, audio, encuesta
+from modules import (
+	light_sensor,
+	humidity,
+	temperature,
+	accelerometer,
+	audio,
+	encuesta,
+	calidadaire,
+	riesgobiologico,
+	materialespeligrosos,
+	gestionresiduos,
+	consumoenergetico,
+	biodiversidad,
+	gestionagua,
+	contaminacionauditiva,
+)
 
 # --- EcoScore palette (Frutiger Aero + eco glass style) ---
 SKY_TOP    = 0xD9F8FF
@@ -248,20 +263,24 @@ def draw_menu_scene(page_idx=0, selected=0):
 
 
 def run():
-	btn_a.event_pressed = lambda: move_down(state, PAGES)
-	btn_b.event_pressed = lambda: select_item(state, PAGES)
+	def _noop(*_args, **_kwargs):
+		return None
+
+	btn_a.event_pressed = _noop
+	btn_b.event_pressed = _noop
 
 	screen.init(dir=2)
 	show_startup_logo(2.0)
 	state["needs_redraw"] = True
 
 	def run_module(fn):
-		prev_a, prev_b = utils.detach_callbacks(btn_a, btn_b)
 		try:
 			fn()
 		finally:
-			utils.restore_callbacks(btn_a, btn_b, prev_a, prev_b)
-			state["needs_redraw"] = True
+			screen.init(dir=2)
+			utils.clear_screen(SKY_TOP)
+			draw_menu_scene(page_idx=state["page"], selected=state["selected"])
+			state["needs_redraw"] = False
 
 	def show_not_ready(label):
 		utils.clear_screen(SKY_TOP)
@@ -294,8 +313,29 @@ def run():
 				run_module(encuesta.run)
 			elif label == "Audio":
 				run_module(audio.run)
+			elif label == "Calidad Aire":
+				run_module(calidadaire.run)
+			elif label == "Riesgo Biologico":
+				run_module(riesgobiologico.run)
+			elif label == "Mat. Peligrosos":
+				run_module(materialespeligrosos.run)
+			elif label == "Gestion Residuos":
+				run_module(gestionresiduos.run)
+			elif label == "Cons. Energetico":
+				run_module(consumoenergetico.run)
+			elif label == "Biodiversidad":
+				run_module(biodiversidad.run)
+			elif label == "Gestion Agua":
+				run_module(gestionagua.run)
+			elif label == "Contam. Auditiva":
+				run_module(contaminacionauditiva.run)
 			else:
 				run_module(lambda: show_not_ready(label))
+
+		if utils.pressed(btn_a):
+			move_down(state, PAGES)
+		if utils.pressed(btn_b):
+			select_item(state, PAGES)
 
 		if state["needs_redraw"]:
 			draw_menu_scene(page_idx=state["page"], selected=state["selected"])
@@ -306,3 +346,4 @@ def run():
 
 if __name__ == "__main__":
 	run()
+

@@ -36,6 +36,7 @@ public class Audit {
     private String gestionaguaDesc;
     private String contaminacionauditiva;
     private String contaminacionauditivaDesc;
+    private String conclusions;
     private LocalDateTime createdAt;
 
     public Audit() {
@@ -287,6 +288,14 @@ public class Audit {
 
     public void setContaminacionauditivaDesc(String contaminacionauditivaDesc) {
         this.contaminacionauditivaDesc = contaminacionauditivaDesc;
+    }
+
+    public String getConclusions() {
+        return conclusions;
+    }
+
+    public void setConclusions(String conclusions) {
+        this.conclusions = conclusions;
     }
 
     public LocalDateTime getCreatedAt() {

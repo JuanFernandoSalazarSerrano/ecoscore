@@ -34,6 +34,7 @@ interface ReportData {
   gestion_agua_descripcion: string;
   contaminacion_auditiva_imagen: string;
   contaminacion_auditiva_descripcion: string;
+  conclusions: string;
   created_at: string;
 }
 
@@ -90,7 +91,20 @@ export class EcoPaladinResults {
     gestion_agua_descripcion: 'Automated water control systems working efficiently.',
     contaminacion_auditiva_imagen: '/contaminacionauditiva/3.png',
     contaminacion_auditiva_descripcion: 'Acoustic contamination remains below minimum thresholds.',
+    conclusions: 'No conclusions provided.',
     created_at: '2026-05-09 09:12:03'
+  };
+
+  selectedImage: string | null = null;
+  selectedImageLabel = '';
+  private readonly fallbackImages: Record<string, string> = {
+    calidadaire: 'https://imgs.search.brave.com/Xvwt89otxNjIvLe6KlnqqrhHfLnA42sGweNH1MPRE_k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/aW5mb2JhZS5jb20v/cmVzaXplci92Mi9F/TFhRVFVJUVFCRTNU/SEVSMllITDVOTkdS/VS5qcGc_YXV0aD02/MjU3MTY3ZDVhNTBi/YWM0MjBkYjVmMzIy/MjQwODM5OWZhYzdl/MjBhMmVlODEzZTFm/MzU5NTgzZGE2MzBj/YWUyJnNtYXJ0PXRy/dWUmd2lkdGg9MzUw/JmhlaWdodD0xOTcm/cXVhbGl0eT04NQ',
+    riesgobiologico: 'https://imgs.search.brave.com/oGR90crit3nmTZD3l5q8FQ2IZvl3XVKe4f275o4eFHY/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTQx/MDE1MTczOS9waG90/by9hYmFuZG9uZWQt/cGxhc3RpYy1wYWNr/YWdpbmctd2l0aC1z/dGFnbmFudC1kaXJ0/eS13YXRlci1pbnNp/ZGUtY2xvc2Utdmll/dy1tb3NxdWl0b2Vz/LWluLmpwZz9zPTYx/Mng2MTImdz0wJms9/MjAmYz0tV2hzTzFL/NWxFbmxXbjExU2NR/bk1VQTJqbEUzMjhF/R0QzaGtzaEpNNHFV/PQ',
+    materialespeligrosos: 'https://imgs.search.brave.com/bYVyLc83aiUcCcL0_pZIlD9C1G3LAL2Eo8vlkXwGGyU/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi91bmEt/ZW1waW5hZGEtbGFk/ZXJhLXF1ZS1kZXNj/aWVuZGUtYWwtciVD/MyVBRG8tbGxlbm8t/ZGUtYmFzdXJhLXRp/cmFkYS1wb3ItbG9z/LWx1Z2FyZSVDMyVC/MW9zLWVuLWVsLXB1/ZWJsby1sYWRlcmFz/LWNvbnN0cnVjY2kl/QzMlQjNuLWFsZGVh/cy0yMDYwMjg0OTYu/anBn',
+    gestionresiduos: 'https://imgs.search.brave.com/cZnEruor6_dwGzx8LN-tzTmbm0IYP-Yhw1gZDnESm98/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Y2FuZWNhcy5jb20u/Y28vaW1hZ2VzLzIw/MjUvbm92aWVtYnJl/Ly8zLXJlY2ljbGFq/ZS1lbi1pbnN0aXR1/Y2lvbmVzLWVkdWNh/dGl2YXMud2VicA',
+    biodiversidad: 'https://imgs.search.brave.com/0LAB5h6T9wQcBpXfPDJEKf6Ma0ObTzNMnjylgdPVXCs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly85MG1p/bnV0b3MuY28vd3At/Y29udGVudC91cGxv/YWRzLzIwMjUvMDIv/YmlvZGl2ZXJzaWRh/ZC1lbi1lbC1WYWxs/ZS1kZWwtQ2F1Y2Et/MTUzNng4NjQtMS0y/NzB4MjcwLmpwZw',
+    gestionagua: 'https://imgs.search.brave.com/a5ivXmI77PgitK41zXP-AOKWsJX3F3VsNZEUP9ByMpM/rs:fit:0:180:1:0/g:ce/aHR0cHM6Ly93d3cu/bWl0ZWNvLmdvYi5l/cy9lcy9hZ3VhL3Rl/bWFzL19qY3JfY29u/dGVudC9yb290L2Nv/bnRhaW5lci9jb250/YWluZXItbWFpbi9j/b250YWluZXItYmFu/bmVyL2Nhcm91c2Vs/X2NvbnRhaW5lci9j/YXJvdXNlbF9pdGVt/MTQuY29yZWltZy5q/cGVnLzE3NzgyMzM2/NTE2MjAvYWZvcm8t/bW9udGF2ZXJuZXIt/ODI1eDE5MC0yLXRj/bTMwLTEzNjIyNC5q/cGVn',
+    contaminacionauditiva: 'https://imgs.search.brave.com/d5zuzlEMN6VQGwM9OrrQP0CZBzHv7mwJXIVP58q8m1s/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/ZXVzdG9uOTYuY29t/L3dwLWNvbnRlbnQv/dXBsb2Fkcy8yMDE4/LzAzL0NvbnRhbWlu/YWNpJUMzJUIzbi1h/YyVDMyVCQXN0aWNh/LTMwMHgxNzYuanBn',
   };
 
   constructor(
@@ -174,6 +188,43 @@ export class EcoPaladinResults {
     return 'text-red-600';
   }
 
+  openImage(src: string | null | undefined, label: string): void {
+    if (!src) {
+      return;
+    }
+
+    this.selectedImage = src;
+    this.selectedImageLabel = label;
+  }
+
+  closeImage(): void {
+    this.selectedImage = null;
+    this.selectedImageLabel = '';
+  }
+
+  handleImageError(event: Event, fallbackKey: string, field?: keyof ReportData): void {
+    const img = event.target as HTMLImageElement | null;
+    if (!img) {
+      return;
+    }
+
+    const fallback = this.fallbackImages[fallbackKey];
+    if (fallback && img.src !== fallback) {
+      img.src = fallback;
+      if (field) {
+        (this.reportData as unknown as Record<string, string>)[field] = fallback;
+        this.cdr.detectChanges();
+      }
+      return;
+    }
+
+    img.style.display = 'none';
+    const sibling = img.nextElementSibling as HTMLElement | null;
+    if (sibling) {
+      sibling.style.display = 'flex';
+    }
+  }
+
   private getTemperatureScore(): number {
     const temp = parseFloat(this.reportData.temperatura_celsius);
     if (temp >= 18 && temp <= 24) return 100;
@@ -248,6 +299,7 @@ export class EcoPaladinResults {
       gestion_agua_descripcion: audit.gestionaguaDesc ?? '',
       contaminacion_auditiva_imagen: this.imagePath('contaminacionauditiva'),
       contaminacion_auditiva_descripcion: audit.contaminacionauditivaDesc ?? '',
+      conclusions: audit.conclusions ?? 'No conclusions provided.',
       created_at: audit.createdAt ?? '',
     };
   }

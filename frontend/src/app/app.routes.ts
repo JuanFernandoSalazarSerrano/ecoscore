@@ -9,6 +9,7 @@ import { SolicitationFormComponent } from './components/solicitationform/solicit
 import { Paladinappointments } from './components/paladinappointments/paladinappointments';
 import { Reportcomplete } from './components/reportcomplete/reportcomplete';
 import { Paladinbuildreport } from './components/paladinbuildreport/paladinbuildreport';
+import { Waitingforreport } from './components/waitingforreport/waitingforreport';
 
 export const routes: Routes = [
   {
@@ -24,6 +25,7 @@ export const routes: Routes = [
   { path: 'reportcomplete', component: Reportcomplete },
   { path: 'paladinappointments', component: Paladinappointments },
   { path: 'paladinbuildreport', component: Paladinbuildreport },
+  { path: 'waitingforreport', component: Waitingforreport },
   { path: 'solicitation', component: SolicitationFormComponent },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },

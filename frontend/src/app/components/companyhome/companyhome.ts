@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { EcoLeafIcon } from '../eco-leaf-icon/eco-leaf-icon';
 import { EcoPaladinButton } from '../eco-paladin-button/eco-paladin-button';
 import { catchError, of } from 'rxjs';
+import { AuditSolicitationService } from '../../services/audit-solicitation.service';
 
 interface CompanyResponse {
   id: number;
@@ -48,7 +49,8 @@ interface StatCard {
   styleUrl: './companyhome.css',
 })
 export class Companyhome {
-  private readonly companyUrl = 'http://127.0.0.1:8080/api/companies/2';
+  private readonly companyId = 2;
+  private readonly companyUrl = `http://localhost:8001/api/companies/${this.companyId}`;
 
   readonly isLoading = signal(true);
 
@@ -108,8 +110,12 @@ export class Companyhome {
     return `${this.circumference * progress} ${this.circumference * (1 - progress)}`;
   });
 
-  constructor(private readonly http: HttpClient) {
+  constructor(
+    private readonly http: HttpClient,
+    private readonly auditSolicitationService: AuditSolicitationService
+  ) {
     this.loadCompany();
+    this.loadAuditSolicitationStatus();
   }
 
   private loadCompany(): void {
@@ -170,6 +176,10 @@ export class Companyhome {
 
         this.isLoading.set(false);
       });
+  }
+
+  private loadAuditSolicitationStatus(): void {
+    this.auditSolicitationService.loadLatestStatus(this.companyId).subscribe();
   }
 
   getScoreColor(score: number): string {

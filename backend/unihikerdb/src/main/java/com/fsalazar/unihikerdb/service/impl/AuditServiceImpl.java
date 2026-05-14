@@ -130,6 +130,7 @@ public class AuditServiceImpl implements AuditService {
                 case "gestionagua_desc" -> audit.setGestionaguaDesc(stringValue(value));
                 case "contaminacionauditiva" -> audit.setContaminacionauditiva(stringValue(value));
                 case "contaminacionauditiva_desc" -> audit.setContaminacionauditivaDesc(stringValue(value));
+                case "conclusions" -> audit.setConclusions(stringValue(value));
                 case "id", "created_at" -> {
                 }
                 default -> {

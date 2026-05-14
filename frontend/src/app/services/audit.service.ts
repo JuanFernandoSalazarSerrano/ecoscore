@@ -34,6 +34,7 @@ export interface AuditResponse {
   gestionaguaDesc: string | null;
   contaminacionauditiva: string | null;
   contaminacionauditivaDesc: string | null;
+  conclusions: string | null;
   createdAt: string | null;
 }
 

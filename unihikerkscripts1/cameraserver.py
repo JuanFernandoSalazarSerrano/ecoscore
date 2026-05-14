@@ -15,9 +15,13 @@ Install:
 """
 
 import cgi
+import json
 import os
 import sys
 import time
+import threading
+import urllib.error
+import urllib.request
 from urllib.parse import urlparse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -32,6 +36,10 @@ os.makedirs(RAW_DIR, exist_ok=True)
 os.makedirs(DEC_DIR, exist_ok=True)
 
 MAX_FRAMES = 500
+
+AUDIT_URL = os.environ.get("AUDIT_URL", "http://localhost:8080/api/audit")
+DEVICE_ID = os.environ.get("K10_DEVICE_ID", "k10-01")
+AUDIT_TIMEOUT_S = float(os.environ.get("AUDIT_TIMEOUT_S", "2"))
 
 SENSOR_ENDPOINTS = {
     "calidadaire",
@@ -57,7 +65,7 @@ FORCE_SKIP = None
 
 # Set to 0 to keep portrait.
 # Set to 90 or 270 if you want a landscape output file too.
-ROTATE_DEG = 90
+ROTATE_DEG = 0
 
 WB_SCALE = np.array([1.15, 1.00, 0.80], dtype=np.float32)
 SATURATION = 1.15
@@ -161,6 +169,42 @@ def ensure_dirs(sensor):
     return raw_dir, dec_dir
 
 
+def to_public_path(file_path):
+    rel = os.path.relpath(file_path, start=SAVE_DIR)
+    rel = rel.replace(os.sep, "/")
+    return "/" + SAVE_DIR + "/" + rel
+
+
+def send_audit_update(sensor, image_path):
+    if not sensor or not image_path:
+        return
+    payload = {
+        "device_id": DEVICE_ID,
+        sensor: image_path,
+    }
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(
+        AUDIT_URL,
+        data=data,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=AUDIT_TIMEOUT_S) as resp:
+            resp.read()
+    except urllib.error.URLError as exc:
+        print(f"  Audit POST failed: {exc}")
+
+
+def send_audit_update_async(sensor, image_path):
+    thread = threading.Thread(
+        target=send_audit_update,
+        args=(sensor, image_path),
+        daemon=True,
+    )
+    thread.start()
+
+
 def resolve_endpoint(path):
     route = urlparse(path).path.strip("/")
     if route == "upload":
@@ -238,6 +282,7 @@ class FrameHandler(BaseHTTPRequestHandler):
             f.write(data)
 
         saved = [f"raw={raw_path}"]
+        image_path = None
 
         # If the payload is already encoded, save directly.
         if data[:2] == b"\xff\xd8":
@@ -245,18 +290,21 @@ class FrameHandler(BaseHTTPRequestHandler):
             with open(jpg_path, "wb") as f:
                 f.write(data)
             saved.append(f"jpg={jpg_path}")
+            image_path = jpg_path
 
         elif data[:8] == b"\x89PNG\r\n\x1a\n":
             png_path = os.path.join(dec_dir, base + ".png")
             with open(png_path, "wb") as f:
                 f.write(data)
             saved.append(f"png={png_path}")
+            image_path = png_path
 
         elif data[:2] == b"BM":
             bmp_path = os.path.join(dec_dir, base + ".bmp")
             with open(bmp_path, "wb") as f:
                 f.write(data)
             saved.append(f"bmp={bmp_path}")
+            image_path = bmp_path
 
         else:
             cache_key = sensor or "__default__"
@@ -265,6 +313,7 @@ class FrameHandler(BaseHTTPRequestHandler):
             )
             if decoded_path:
                 saved.append(f"png={decoded_path}")
+                image_path = decoded_path
             else:
                 saved.append(f"decode_error={decode_err}")
 
@@ -273,6 +322,9 @@ class FrameHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b"OK")
+
+        if sensor and image_path:
+            send_audit_update_async(sensor, to_public_path(image_path))
 
         cleanup_raw_dir(raw_dir)
 

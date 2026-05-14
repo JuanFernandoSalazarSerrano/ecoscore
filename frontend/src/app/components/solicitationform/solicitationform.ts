@@ -1,8 +1,9 @@
 // solicitation-form.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { AuditSolicitationCreateRequest, AuditSolicitationService } from '../../services/audit-solicitation.service';
 
 @Component({
   selector: 'app-solicitation-form',
@@ -10,10 +11,11 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } fr
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './solicitationform.html',
 })
-export class SolicitationFormComponent {
+export class SolicitationFormComponent implements OnInit {
   solicitationForm: FormGroup;
   currentStep = 1;
   totalSteps = 4;
+  private readonly companyId = 2;
 
   facilityTypes = [
     'Education',
@@ -39,7 +41,11 @@ export class SolicitationFormComponent {
     'Full Day'
   ];
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private readonly router: Router,
+    private readonly auditSolicitationService: AuditSolicitationService
+  ) {
     this.solicitationForm = this.fb.group({
       // Step 1: Facility Information
       facilityName: ['', [Validators.required, Validators.minLength(2)]],
@@ -84,6 +90,18 @@ export class SolicitationFormComponent {
       previousAuditDate: [''],
       agreedToTerms: [false, Validators.requiredTrue]
     });
+  }
+
+  ngOnInit(): void {
+    const status = this.auditSolicitationService.getCachedStatus();
+    if (status === true) {
+      this.router.navigateByUrl('/reportcomplete');
+      return;
+    }
+    if (status === false) {
+      this.router.navigateByUrl('/waitingforreport');
+      return;
+    }
   }
 
   get auditTypesArray(): FormArray {
@@ -164,11 +182,113 @@ export class SolicitationFormComponent {
   }
 
   onSubmit(): void {
-    if (this.solicitationForm.valid) {
-      console.log('Form submitted:', this.solicitationForm.value);
-      // Handle form submission
-    } else {
+    if (!this.solicitationForm.valid) {
       this.solicitationForm.markAllAsTouched();
+      return;
     }
+
+    const raw = this.solicitationForm.getRawValue();
+    const payload: AuditSolicitationCreateRequest = {
+      facilityName: raw.facilityName,
+      facilityType: raw.facilityType,
+      facilityDescription: raw.facilityDescription,
+      streetAddress: raw.streetAddress,
+      city: raw.city,
+      state: raw.state,
+      country: raw.country,
+      postalCode: raw.postalCode,
+      totalArea: Number(raw.totalArea),
+      areaUnit: raw.areaUnit,
+      numberOfFloors: Number(raw.numberOfFloors),
+      numberOfEmployees: Number(raw.numberOfEmployees),
+      operatingHours: raw.operatingHours,
+      yearBuilt: Number(raw.yearBuilt),
+      lastRenovationYear: this.normalizeOptionalNumber(raw.lastRenovationYear),
+      existingCertifications: this.normalizeOptionalText(raw.existingCertifications),
+      previousAuditDate: this.normalizeOptionalText(raw.previousAuditDate),
+      auditTypes: JSON.stringify(this.auditTypesArray.value),
+      preferredStartDate: raw.preferredStartDate,
+      preferredEndDate: raw.preferredEndDate,
+      preferredTimeSlot: raw.preferredTimeSlot,
+      accessRestrictions: this.normalizeOptionalText(raw.accessRestrictions),
+      specialInstructions: this.normalizeOptionalText(raw.specialInstructions),
+      contactName: raw.contactName,
+      contactTitle: raw.contactTitle,
+      contactEmail: raw.contactEmail,
+      contactPhone: raw.contactPhone,
+      alternateContactName: this.normalizeOptionalText(raw.alternateContactName),
+      alternateContactPhone: this.normalizeOptionalText(raw.alternateContactPhone),
+      website: this.normalizeOptionalText(raw.website),
+      agreedToTerms: raw.agreedToTerms,
+      solved: false,
+      companyId: this.companyId,
+    };
+
+    this.auditSolicitationService.createSolicitation(payload).subscribe({
+      next: () => {
+        this.auditSolicitationService.setCachedStatus(false);
+        this.router.navigateByUrl('/waitingforreport');
+      },
+      error: (error) => {
+        console.error('Failed to submit audit solicitation', error);
+      },
+    });
+  }
+
+  private normalizeOptionalText(value: unknown): string | null {
+    if (typeof value !== 'string') {
+      return value == null ? null : String(value);
+    }
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : null;
+  }
+
+  private normalizeOptionalNumber(value: unknown): number | null {
+    if (value === null || value === undefined || value === '') {
+      return null;
+    }
+    const parsed = Number(value);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+
+  fillMockData(): void {
+    const auditTypeIds = ['carbon', 'water', 'energy', 'waste'];
+    while (this.auditTypesArray.length) {
+      this.auditTypesArray.removeAt(0);
+    }
+    auditTypeIds.forEach((id) => this.auditTypesArray.push(this.fb.control(id)));
+
+    this.solicitationForm.patchValue({
+      facilityName: 'Universidad Autonoma de Occidente (UAO)',
+      facilityType: 'Education',
+      facilityDescription: 'University campus focused on sustainability research and green infrastructure.',
+      streetAddress: 'Calle 25 # 115-85',
+      city: 'Cali',
+      state: 'Valle del Cauca',
+      country: 'Colombia',
+      postalCode: '760030',
+      totalArea: 65000,
+      areaUnit: 'sqm',
+      numberOfFloors: 6,
+      numberOfEmployees: 1200,
+      operatingHours: 'Mon-Fri 7:00 AM - 9:00 PM',
+      yearBuilt: 1992,
+      lastRenovationYear: 2022,
+      existingCertifications: 'LEED Gold, ISO 14001',
+      previousAuditDate: '2024-11-15',
+      preferredStartDate: '2026-06-03',
+      preferredEndDate: '2026-06-10',
+      preferredTimeSlot: this.preferredTimeSlots[0],
+      accessRestrictions: 'Lab areas require safety briefing and PPE.',
+      specialInstructions: 'Use visitor parking at Gate 2. Check in at Security Office.',
+      contactName: 'Laura Martinez',
+      contactTitle: 'Sustainability Coordinator',
+      contactEmail: 'laura.martinez@uao.edu.co',
+      contactPhone: '+57 2 318 8000',
+      alternateContactName: 'Andres Gomez',
+      alternateContactPhone: '+57 300 555 0199',
+      website: 'https://www.uao.edu.co',
+      agreedToTerms: true,
+    });
   }
 }

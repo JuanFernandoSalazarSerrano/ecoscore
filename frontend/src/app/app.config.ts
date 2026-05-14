@@ -13,7 +13,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptorsFromDi()),
     provideOAuthClient({
       resourceServer: {
-        allowedUrls: ['http://127.0.0.1:8080/api'],
+        allowedUrls: [
+          'http://127.0.0.1:8080/api',
+          'http://localhost:8080/api',
+          'http://127.0.0.1:8001/api',
+          'http://localhost:8001/api',
+        ],
         sendAccessToken: true,
       },
     }),

@@ -5,6 +5,10 @@ SCREEN_W = 240
 SCREEN_H = 320
 
 
+def _noop(*_args, **_kwargs):
+	return None
+
+
 def clear_screen(color):
 	screen.draw_rect(x=0, y=0, w=SCREEN_W, h=SCREEN_H, bcolor=color, fcolor=color)
 
@@ -24,8 +28,8 @@ def pressed(btn):
 def detach_callbacks(btn_a, btn_b):
 	prev_a = btn_a.event_pressed
 	prev_b = btn_b.event_pressed
-	btn_a.event_pressed = None
-	btn_b.event_pressed = None
+	btn_a.event_pressed = _noop
+	btn_b.event_pressed = _noop
 	return prev_a, prev_b
 
 

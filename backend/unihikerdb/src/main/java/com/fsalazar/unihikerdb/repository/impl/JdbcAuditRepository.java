@@ -26,8 +26,8 @@ public class JdbcAuditRepository implements AuditRepository {
             + "calidadaire, calidadaire_desc, riesgobiologico, riesgobiologico_desc, "
             + "materialespeligrosos, materialespeligrosos_desc, gestionresiduos, gestionresiduos_desc, "
             + "consumoenergetico, consumoenergetico_desc, biodiversidad, biodiversidad_desc, "
-            + "gestionagua, gestionagua_desc, contaminacionauditiva, contaminacionauditiva_desc, created_at"
-            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "gestionagua, gestionagua_desc, contaminacionauditiva, contaminacionauditiva_desc, conclusions, created_at"
+            + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         private static final RowMapper<Audit> AUDIT_ROW_MAPPER = (rs, rowNum) -> mapAudit(rs);
 
@@ -76,6 +76,7 @@ public class JdbcAuditRepository implements AuditRepository {
             statement.setString(index++, audit.getGestionaguaDesc());
             statement.setString(index++, audit.getContaminacionauditiva());
             statement.setString(index++, audit.getContaminacionauditivaDesc());
+            statement.setString(index++, audit.getConclusions());
             statement.setTimestamp(index, Timestamp.valueOf(createdAt));
             return statement;
         }, keyHolder);
@@ -125,6 +126,7 @@ public class JdbcAuditRepository implements AuditRepository {
         audit.setGestionaguaDesc(rs.getString("gestionagua_desc"));
         audit.setContaminacionauditiva(rs.getString("contaminacionauditiva"));
         audit.setContaminacionauditivaDesc(rs.getString("contaminacionauditiva_desc"));
+        audit.setConclusions(rs.getString("conclusions"));
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
             audit.setCreatedAt(createdAt.toLocalDateTime());

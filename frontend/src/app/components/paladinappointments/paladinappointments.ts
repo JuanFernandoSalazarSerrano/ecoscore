@@ -1,7 +1,28 @@
 // paladinappointments.component.ts
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { catchError, of } from 'rxjs';
+
+interface AuditSolicitationResponse {
+  id: number;
+  facilityName: string | null;
+  facilityType: string | null;
+  streetAddress: string | null;
+  city: string | null;
+  country: string | null;
+  preferredStartDate: string | null;
+  preferredTimeSlot: string | null;
+  auditTypes: string | null;
+  solved: boolean | null;
+  contactName: string | null;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  accessRestrictions: string | null;
+  specialInstructions: string | null;
+  createdAt: string | null;
+}
 
 interface Appointment {
   id: string;
@@ -13,7 +34,7 @@ interface Appointment {
   date: string;
   time: string;
   auditTypes: string[];
-  status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'scheduled' | 'completed';
   contactName: string;
   contactPhone: string;
   contactEmail: string;
@@ -28,159 +49,118 @@ interface Appointment {
   imports: [CommonModule, RouterLink],
   templateUrl: './paladinappointments.html',
 })
-export class Paladinappointments {
+export class Paladinappointments implements OnInit {
+  private readonly auditSolicitationUrl = 'http://127.0.0.1:8080/api/audit-solicitations';
+
   selectedFilter: string = 'all';
   selectedAppointment: Appointment | null = null;
+  isLoading = true;
+  loadError = '';
+  scheduledCount = 0;
+  completedCount = 0;
+
+  constructor(
+    private readonly http: HttpClient,
+    private readonly changeDetectorRef: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.loadAppointments();
+  }
 
   trackByAppointmentId(index: number, appointment: Appointment): string {
-  return appointment.id;
-}
+    return appointment.id;
+  }
 
   filters = [
-    { id: 'all', label: 'All', count: 8 },
-    { id: 'scheduled', label: 'Scheduled', count: 4 },
-    { id: 'in-progress', label: 'In Progress', count: 2 },
-    { id: 'completed', label: 'Completed', count: 1 },
-    { id: 'cancelled', label: 'Cancelled', count: 1 },
+    { id: 'all', label: 'All', count: 0 },
+    { id: 'scheduled', label: 'Scheduled', count: 0 },
+    { id: 'completed', label: 'Completed', count: 0 },
   ];
 
-  appointments: Appointment[] = [
-    {
-      id: 'APT-001',
-      facilityName: 'Universidad Autónoma de Occidente',
-      facilityType: 'Education',
-      address: 'Calle 25 # 115-85, Km 2 vía Cali-Jamundí',
-      city: 'Cali, Valle del Cauca',
-      country: 'Colombia',
-      date: '2024-02-15',
-      time: '09:00 AM',
-      auditTypes: ['carbon', 'energy', 'water', 'waste'],
-      status: 'scheduled',
-      contactName: 'Dr. María González',
-      contactPhone: '+57 2 318 8000',
-      contactEmail: 'mgonzalez@uao.edu.co',
-      estimatedDuration: 'Full Day (8 hours)',
-      notes: 'Main campus audit. Security clearance required at entrance.',
-    },
-    {
-      id: 'APT-002',
-      facilityName: 'TechHub Innovation Center',
-      facilityType: 'Office Building',
-      address: '450 Silicon Avenue, Building C',
-      city: 'San Francisco, CA',
-      country: 'United States',
-      date: '2024-02-14',
-      time: '10:00 AM',
-      auditTypes: ['carbon', 'energy'],
-      status: 'in-progress',
-      contactName: 'James Chen',
-      contactPhone: '+1 (415) 555-0123',
-      contactEmail: 'jchen@techhub.io',
-      estimatedDuration: 'Half Day (4 hours)',
-      ecoScore: 72,
-    },
-    {
-      id: 'APT-003',
-      facilityName: 'GreenLeaf Manufacturing',
-      facilityType: 'Manufacturing',
-      address: '2800 Industrial Park Road',
-      city: 'Munich, Bavaria',
-      country: 'Germany',
-      date: '2024-02-16',
-      time: '08:00 AM',
-      auditTypes: ['carbon', 'waste', 'water'],
-      status: 'scheduled',
-      contactName: 'Hans Mueller',
-      contactPhone: '+49 89 1234567',
-      contactEmail: 'hmueller@greenleaf.de',
-      estimatedDuration: 'Full Day (8 hours)',
-      notes: 'PPE required. Bring safety boots and hard hat.',
-    },
-    {
-      id: 'APT-004',
-      facilityName: 'Central Hospital Complex',
-      facilityType: 'Healthcare',
-      address: '100 Medical Center Drive',
-      city: 'Toronto, Ontario',
-      country: 'Canada',
-      date: '2024-02-12',
-      time: '07:00 AM',
-      auditTypes: ['energy', 'water', 'waste'],
-      status: 'completed',
-      contactName: 'Dr. Sarah Thompson',
-      contactPhone: '+1 (416) 555-7890',
-      contactEmail: 'sthompson@centralhospital.ca',
-      estimatedDuration: 'Full Day (8 hours)',
-      ecoScore: 85,
-    },
-    {
-      id: 'APT-005',
-      facilityName: 'EcoMart Distribution Center',
-      facilityType: 'Warehouse',
-      address: '5500 Logistics Boulevard',
-      city: 'Rotterdam',
-      country: 'Netherlands',
-      date: '2024-02-17',
-      time: '06:00 AM',
-      auditTypes: ['carbon', 'energy'],
-      status: 'scheduled',
-      contactName: 'Erik van der Berg',
-      contactPhone: '+31 10 123 4567',
-      contactEmail: 'evandenberg@ecomart.nl',
-      estimatedDuration: 'Half Day (4 hours)',
-    },
-    {
-      id: 'APT-006',
-      facilityName: 'Nordic Data Systems',
-      facilityType: 'Data Center',
-      address: '15 Arctic Circle Tech Park',
-      city: 'Stockholm',
-      country: 'Sweden',
-      date: '2024-02-13',
-      time: '09:00 AM',
-      auditTypes: ['energy', 'carbon'],
-      status: 'in-progress',
-      contactName: 'Anna Lindqvist',
-      contactPhone: '+46 8 123 456 78',
-      contactEmail: 'alindqvist@nordicdata.se',
-      estimatedDuration: 'Full Day (8 hours)',
-      ecoScore: 68,
-      notes: 'High security facility. Escort required at all times.',
-    },
-    {
-      id: 'APT-007',
-      facilityName: 'Fashion Forward Retail HQ',
-      facilityType: 'Retail',
-      address: '88 Champs-Élysées',
-      city: 'Paris',
-      country: 'France',
-      date: '2024-02-18',
-      time: '10:00 AM',
-      auditTypes: ['carbon', 'waste'],
-      status: 'scheduled',
-      contactName: 'Sophie Dubois',
-      contactPhone: '+33 1 23 45 67 89',
-      contactEmail: 'sdubois@fashionforward.fr',
-      estimatedDuration: 'Half Day (4 hours)',
-    },
-    {
-      id: 'APT-008',
-      facilityName: 'Sunrise Solar Farm',
-      facilityType: 'Other',
-      address: '1 Renewable Energy Way',
-      city: 'Phoenix, AZ',
-      country: 'United States',
-      date: '2024-02-10',
-      time: '08:00 AM',
-      auditTypes: ['energy', 'carbon', 'water'],
-      status: 'cancelled',
-      contactName: 'Robert Martinez',
-      contactPhone: '+1 (602) 555-4321',
-      contactEmail: 'rmartinez@sunrisesolar.com',
-      estimatedDuration: 'Full Day (8 hours)',
-      notes: 'Cancelled due to equipment maintenance.',
-    },
-  ];
+  appointments: Appointment[] = [];
+
+  private loadAppointments(): void {
+    this.isLoading = true;
+    this.loadError = '';
+    this.http
+      .get<AuditSolicitationResponse[]>(this.auditSolicitationUrl)
+      .pipe(
+        catchError((error) => {
+          console.error('Failed to load audit solicitations', error);
+          this.loadError = 'Unable to load appointments right now.';
+          this.isLoading = false;
+          return of([] as AuditSolicitationResponse[]);
+        })
+      )
+      .subscribe((items) => {
+        this.appointments = items.map((item) => this.mapAppointment(item));
+        this.updateFilterCounts();
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
+  private mapAppointment(item: AuditSolicitationResponse): Appointment {
+    const auditTypes = this.parseAuditTypes(item.auditTypes);
+    const status: 'scheduled' | 'completed' = item.solved ? 'completed' : 'scheduled';
+    const date = item.preferredStartDate || item.createdAt || '';
+    const time = item.preferredTimeSlot || 'TBD';
+    const notes = item.specialInstructions || item.accessRestrictions || undefined;
+    return {
+      id: `${item.id}`,
+      facilityName: item.facilityName || 'Unknown Facility',
+      facilityType: item.facilityType || 'Other',
+      address: item.streetAddress || 'TBD',
+      city: item.city || 'TBD',
+      country: item.country || 'TBD',
+      date,
+      time,
+      auditTypes,
+      status,
+      contactName: item.contactName || 'TBD',
+      contactPhone: item.contactPhone || 'TBD',
+      contactEmail: item.contactEmail || 'TBD',
+      estimatedDuration: this.resolveDuration(item.preferredTimeSlot),
+      notes,
+    };
+  }
+
+  private parseAuditTypes(value: string | null): string[] {
+    if (!value) {
+      return [];
+    }
+    const trimmed = value.trim();
+    const cleaned = trimmed.replace(/^\[|\]$/g, '');
+    return cleaned
+      .split(',')
+      .map((entry) => entry.trim().replace(/^['"]|['"]$/g, ''))
+      .filter(Boolean);
+  }
+
+  private resolveDuration(timeSlot: string | null): string {
+    if (!timeSlot) {
+      return 'TBD';
+    }
+    const normalized = timeSlot.toLowerCase();
+    if (normalized.includes('full day')) {
+      return 'Full Day';
+    }
+    if (normalized.includes('morning') || normalized.includes('afternoon')) {
+      return 'Half Day';
+    }
+    return timeSlot;
+  }
+
+  private updateFilterCounts(): void {
+    this.scheduledCount = this.appointments.filter((apt) => apt.status === 'scheduled').length;
+    this.completedCount = this.appointments.filter((apt) => apt.status === 'completed').length;
+    this.filters = [
+      { id: 'all', label: 'All', count: this.appointments.length },
+      { id: 'scheduled', label: 'Scheduled', count: this.scheduledCount },
+      { id: 'completed', label: 'Completed', count: this.completedCount },
+    ];
+  }
 
   get filteredAppointments(): Appointment[] {
     if (this.selectedFilter === 'all') {
@@ -197,23 +177,11 @@ export class Paladinappointments {
         textClass: 'text-blue-700',
         dotClass: 'bg-blue-500'
       },
-      'in-progress': {
-        label: 'In Progress',
-        bgClass: 'bg-amber-50',
-        textClass: 'text-amber-700',
-        dotClass: 'bg-amber-500'
-      },
       'completed': {
         label: 'Completed',
         bgClass: 'bg-emerald-50',
         textClass: 'text-emerald-700',
         dotClass: 'bg-emerald-500'
-      },
-      'cancelled': {
-        label: 'Cancelled',
-        bgClass: 'bg-rose-50',
-        textClass: 'text-rose-700',
-        dotClass: 'bg-rose-500'
       },
     };
     return configs[status] || configs['scheduled'];
@@ -244,6 +212,9 @@ export class Paladinappointments {
   }
 
   formatDate(dateStr: string): string {
+    if (!dateStr) {
+      return 'TBD';
+    }
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-US', {
       weekday: 'short',

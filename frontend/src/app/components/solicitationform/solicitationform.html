@@ -61,6 +61,14 @@
   <div class="max-w-4xl mx-auto">
     <div class="bg-white rounded-3xl shadow-xl shadow-emerald-100/50 border border-emerald-100 overflow-hidden">
       <form [formGroup]="solicitationForm" (ngSubmit)="onSubmit()">
+        <div class="px-8 pt-6">
+          <button
+            type="button"
+            (click)="fillMockData()"
+            class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100">
+            Use UAO mock data
+          </button>
+        </div>
 
         <!-- Step 1: Facility Information -->
         @if (currentStep === 1) {

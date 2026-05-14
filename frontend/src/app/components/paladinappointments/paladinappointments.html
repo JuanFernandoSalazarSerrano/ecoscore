@@ -28,11 +28,11 @@
       <div class="hidden md:flex items-center gap-4">
         <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-emerald-100">
           <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-          <span class="text-sm text-gray-600">4 Upcoming</span>
+          <span class="text-sm text-gray-600">{{ scheduledCount }} Scheduled</span>
         </div>
         <div class="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-emerald-100">
-          <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-          <span class="text-sm text-gray-600">2 In Progress</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span class="text-sm text-gray-600">{{ completedCount }} Completed</span>
         </div>
       </div>
     </div>
@@ -59,6 +59,12 @@
 
   <!-- Appointments List -->
   <div class="max-w-6xl mx-auto">
+    <div *ngIf="isLoading" class="mb-4 rounded-2xl border border-emerald-100 bg-white p-4 text-sm text-gray-600">
+      Loading appointments...
+    </div>
+    <div *ngIf="!isLoading && loadError" class="mb-4 rounded-2xl border border-rose-100 bg-rose-50 p-4 text-sm text-rose-700">
+      {{ loadError }}
+    </div>
     <div class="grid gap-4">
       <div
         *ngFor="let appointment of filteredAppointments; trackBy: trackByAppointmentId"
@@ -151,7 +157,7 @@
       </div>
 
       <!-- Empty State -->
-      <div *ngIf="filteredAppointments.length === 0" class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-12 text-center">
+      <div *ngIf="!isLoading && filteredAppointments.length === 0" class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-12 text-center">
         <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
           <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>

@@ -18,9 +18,14 @@ public class UnihikerdbApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/sensor-readings/temperature").allowedOrigins("http://localhost:4200");
-				registry.addMapping("/api/sensor-readings/humidity").allowedOrigins("http://localhost:4200");
-				registry.addMapping("/api/audit/**").allowedOrigins("http://localhost:4200");
+				String[] allowedOrigins = {
+						"http://localhost:4200",
+						"http://127.0.0.1:4200"
+				};
+				registry.addMapping("/api/sensor-readings/temperature").allowedOrigins(allowedOrigins);
+				registry.addMapping("/api/sensor-readings/humidity").allowedOrigins(allowedOrigins);
+				registry.addMapping("/api/audit/**").allowedOrigins(allowedOrigins);
+				registry.addMapping("/api/audit-solicitations/**").allowedOrigins(allowedOrigins);
 			}
 		};
 	}

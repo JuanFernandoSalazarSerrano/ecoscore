@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 interface SensorField {
@@ -42,6 +43,27 @@ interface ReportData {
   gestionagua_desc: string;
   contaminacionauditiva: string;
   contaminacionauditiva_desc: string;
+  conclusions: string;
+  solved:boolean;
+}
+
+interface AuditTextareaPayload {
+  device_id: string;
+  temp_c_desc: string;
+  temp_f_desc: string;
+  humidity_desc: string;
+  accelerometer_desc: string;
+  light_desc: string;
+  questions_desc: string;
+  calidadaire_desc: string;
+  riesgobiologico_desc: string;
+  materialespeligrosos_desc: string;
+  gestionresiduos_desc: string;
+  consumoenergetico_desc: string;
+  biodiversidad_desc: string;
+  gestionagua_desc: string;
+  contaminacionauditiva_desc: string;
+  conclusions: string;
 }
 
 @Component({
@@ -52,6 +74,11 @@ interface ReportData {
   styleUrl: './paladinbuildreport.css',
 })
 export class Paladinbuildreport {
+  private readonly auditUrl = 'http://127.0.0.1:8080/api/audit';
+  submitState: 'idle' | 'sending' | 'success' | 'error' = 'idle';
+  submitMessage = '';
+
+  constructor(private readonly http: HttpClient) {}
 
   reportData: ReportData = {
     device_id: '',
@@ -82,7 +109,9 @@ export class Paladinbuildreport {
     gestionagua: '',
     gestionagua_desc: '',
     contaminacionauditiva: '',
-    contaminacionauditiva_desc: ''
+    contaminacionauditiva_desc: '',
+    conclusions: '',
+    solved:false
   };
 
   sensorFields: SensorField[] = [
@@ -284,9 +313,45 @@ export class Paladinbuildreport {
     }
   }
 
+  private buildTextareaPayload(): AuditTextareaPayload {
+    return {
+      device_id: this.reportData.device_id ?? '',
+      temp_c_desc: this.reportData.temp_c_desc ?? '',
+      temp_f_desc: this.reportData.temp_f_desc ?? '',
+      humidity_desc: this.reportData.humidity_desc ?? '',
+      accelerometer_desc: this.reportData.accelerometer_desc ?? '',
+      light_desc: this.reportData.light_desc ?? '',
+      questions_desc: this.reportData.questions_desc ?? '',
+      calidadaire_desc: this.reportData.calidadaire_desc ?? '',
+      riesgobiologico_desc: this.reportData.riesgobiologico_desc ?? '',
+      materialespeligrosos_desc: this.reportData.materialespeligrosos_desc ?? '',
+      gestionresiduos_desc: this.reportData.gestionresiduos_desc ?? '',
+      consumoenergetico_desc: this.reportData.consumoenergetico_desc ?? '',
+      biodiversidad_desc: this.reportData.biodiversidad_desc ?? '',
+      gestionagua_desc: this.reportData.gestionagua_desc ?? '',
+      contaminacionauditiva_desc: this.reportData.contaminacionauditiva_desc ?? '',
+      conclusions: this.reportData.conclusions ?? ''
+    };
+  }
+
   generateReport(): void {
-    console.log('Generated Report Data:', this.reportData);
-    // Emit or save the report data
+    const payload = this.buildTextareaPayload();
+    this.submitState = 'sending';
+    this.submitMessage = 'Sending report...';
+
+    this.http.post(this.auditUrl, payload).subscribe({
+      next: (response) => {
+        this.submitState = 'success';
+        this.submitMessage = 'Report sent successfully.';
+        console.log('Generated Report Payload:', payload);
+        console.log('Report API Response:', response);
+      },
+      error: (error) => {
+        this.submitState = 'error';
+        this.submitMessage = 'Report submission failed.';
+        console.error('Report submission failed:', error);
+      }
+    });
   }
 
   clearForm(): void {
@@ -319,7 +384,11 @@ export class Paladinbuildreport {
       gestionagua: '',
       gestionagua_desc: '',
       contaminacionauditiva: '',
-      contaminacionauditiva_desc: ''
+      contaminacionauditiva_desc: '',
+      conclusions: '',
+      solved:false
     };
+    this.submitState = 'idle';
+    this.submitMessage = '';
   }
 }

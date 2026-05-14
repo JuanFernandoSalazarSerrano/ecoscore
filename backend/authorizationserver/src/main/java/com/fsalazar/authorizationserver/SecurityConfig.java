@@ -119,7 +119,7 @@ public class SecurityConfig {
 	public UserDetailsService userDetailsService() {
 		
 		UserDetails userDetails = User.withDefaultPasswordEncoder()
-				.username("user")
+				.username("uao")
 				.password("password")
 				.roles("USER")
 				.build();
