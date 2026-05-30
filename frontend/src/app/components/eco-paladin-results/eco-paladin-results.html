@@ -357,7 +357,7 @@
           Conclusion
         </h2>
         <div class="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg shadow-emerald-900/5 border border-white/50 p-6">
-          <p class="text-sm text-gray-700 whitespace-pre-line">{{ reportData.conclusions }}</p>
+          <div class="text-sm text-gray-700 whitespace-pre-line" [innerHTML]="sanitizedConclusions"></div>
         </div>
       </section>
 

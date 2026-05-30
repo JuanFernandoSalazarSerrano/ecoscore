@@ -1,0 +1,94 @@
+<section class="lab-page">
+  <div class="lab-shell">
+    <header class="lab-header">
+      <p class="lab-kicker">LOCAL ONLY</p>
+      <h1 class="lab-title">Cybersecurity Training Lab</h1>
+      <p class="lab-subtitle">
+        This UI intentionally demonstrates unsafe patterns. Use only on localhost with LAB_MODE enabled.
+      </p>
+    </header>
+
+    <div class="lab-warning">
+      WARNING: Intentionally vulnerable UI and endpoints. Never deploy publicly.
+    </div>
+
+    <div class="lab-tabs" role="tablist">
+      <button
+        type="button"
+        class="lab-tab"
+        role="tab"
+        *ngFor="let tab of tabs"
+        [class.lab-tab--active]="activeTab === tab.id"
+        [attr.aria-selected]="activeTab === tab.id"
+        (click)="setTab(tab.id)"
+      >
+        <span class="lab-tab-label">{{ tab.label }}</span>
+        <span class="lab-tab-sub">{{ tab.blurb }}</span>
+      </button>
+    </div>
+
+    <section class="lab-card" *ngIf="activeTab === 'canopy'">
+      <div class="lab-card-header">
+        <h2>Canopy Echo</h2>
+        <span class="lab-badge lab-badge--danger">flora reflection</span>
+      </div>
+
+      <label class="lab-label" for="xssInput">Signal payload</label>
+      <input id="xssInput" class="lab-input" [(ngModel)]="xssInput" />
+
+      <div class="lab-actions">
+        <button class="lab-button lab-button--danger" (click)="runXssUnsafe()">Open canopy</button>
+        <button class="lab-button lab-button--safe" (click)="runXssSecure()">Shielded canopy</button>
+      </div>
+
+      <div class="lab-split">
+        <div class="lab-panel">
+          <h3>Unfiltered render</h3>
+          <div class="lab-preview" [innerHTML]="xssUnsafeHtml"></div>
+          <div class="lab-placeholder" *ngIf="!xssUnsafeHtml">No output yet.</div>
+        </div>
+        <div class="lab-panel">
+          <h3>Filtered render</h3>
+          <div class="lab-preview" [innerHTML]="xssSafeHtml"></div>
+          <div class="lab-placeholder" *ngIf="!xssSafeHtml">No output yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="lab-card" *ngIf="activeTab === 'aquifer'">
+      <div class="lab-card-header">
+        <h2>Aquifer Trace</h2>
+        <span class="lab-badge lab-badge--warning">water flow scan</span>
+      </div>
+
+      <label class="lab-label" for="ssrfUrl">Sampling source</label>
+      <input id="ssrfUrl" class="lab-input" [(ngModel)]="ssrfUrl" />
+
+      <div class="lab-actions">
+        <button class="lab-button lab-button--danger" (click)="runSsrf(false)">Open flow</button>
+        <button class="lab-button lab-button--safe" (click)="runSsrf(true)">Filtered flow</button>
+      </div>
+
+      <pre class="lab-output">{{ ssrfOutput || 'No response yet.' }}</pre>
+    </section>
+
+    <section class="lab-card" *ngIf="activeTab === 'soil'">
+      <div class="lab-card-header">
+        <h2>Soil Pulse</h2>
+        <span class="lab-badge lab-badge--warning">ground sample</span>
+      </div>
+
+      <label class="lab-label" for="rceCmd">Sampling tool</label>
+      <input id="rceCmd" class="lab-input" [(ngModel)]="rceCmd" />
+
+      <div class="lab-actions">
+        <button class="lab-button lab-button--danger" (click)="runRce(false)">Open run</button>
+        <button class="lab-button lab-button--safe" (click)="runRce(true)">Sealed run</button>
+      </div>
+
+      <pre class="lab-output">{{ rceOutput || 'No response yet.' }}</pre>
+    </section>
+
+    <div class="lab-error" *ngIf="error">{{ error }}</div>
+  </div>
+</section>

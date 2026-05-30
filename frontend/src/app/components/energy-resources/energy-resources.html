@@ -1,0 +1,46 @@
+<section class="biz-page">
+  <div class="biz-shell">
+    <header class="biz-header">
+      <p class="biz-kicker">Resource Planning</p>
+      <h1 class="biz-title">Energy Resource Planning</h1>
+      <p class="biz-subtitle">
+        Run utility readiness checks and summarize field diagnostics for leadership reviews.
+      </p>
+    </header>
+
+    <div class="biz-note">Internal workspace. Restricted to approved local environments.</div>
+
+    <nav class="biz-nav">
+      <a
+        *ngFor="let link of navLinks"
+        class="biz-tab"
+        [routerLink]="link.path"
+        routerLinkActive="biz-tab--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="biz-tab-label">{{ link.label }}</span>
+        <span class="biz-tab-sub">{{ link.sub }}</span>
+      </a>
+    </nav>
+
+    <section class="biz-card">
+      <div class="biz-card-header">
+        <h2>Utility Diagnostics</h2>
+        <p class="biz-muted">Execute approved utilities and stage results for audit trails.</p>
+        <span class="biz-pill">Diagnostics</span>
+      </div>
+
+      <label class="biz-label" for="utilityTool">Utility tool</label>
+      <input id="utilityTool" class="biz-input" [(ngModel)]="utilityTool" />
+
+      <div class="biz-actions">
+        <button class="biz-button biz-button--primary" (click)="runDiagnostics(false)">Run diagnostics</button>
+        <button class="biz-button biz-button--secondary" (click)="runDiagnostics(true)">Policy run</button>
+      </div>
+
+      <pre class="biz-output">{{ output || 'No response yet.' }}</pre>
+    </section>
+
+    <div class="biz-error" *ngIf="error">{{ error }}</div>
+  </div>
+</section>

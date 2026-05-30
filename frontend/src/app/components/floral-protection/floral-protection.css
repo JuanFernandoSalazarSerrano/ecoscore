@@ -1,0 +1,7 @@
+@import '../business-lab/business-lab.css';
+
+:host {
+  --accent: #16a34a;
+  --accent-strong: #166534;
+  --accent-soft: rgba(22, 163, 74, 0.14);
+}

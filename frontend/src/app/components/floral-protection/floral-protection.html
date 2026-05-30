@@ -1,0 +1,57 @@
+<section class="biz-page">
+  <div class="biz-shell">
+    <header class="biz-header">
+      <p class="biz-kicker">Compliance Desk</p>
+      <h1 class="biz-title">Floral Protection Desk</h1>
+      <p class="biz-subtitle">
+        Coordinate habitat care notes and partner briefings for protected assets.
+      </p>
+    </header>
+
+    <div class="biz-note">Internal workspace. Restricted to approved local environments.</div>
+
+    <nav class="biz-nav">
+      <a
+        *ngFor="let link of navLinks"
+        class="biz-tab"
+        [routerLink]="link.path"
+        routerLinkActive="biz-tab--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="biz-tab-label">{{ link.label }}</span>
+        <span class="biz-tab-sub">{{ link.sub }}</span>
+      </a>
+    </nav>
+
+    <section class="biz-card">
+      <div class="biz-card-header">
+        <h2>Partner Memo Preview</h2>
+        <p class="biz-muted">Review field notes before they circulate to external partners.</p>
+        <span class="biz-pill">Briefing note</span>
+      </div>
+
+      <label class="biz-label" for="memoInput">Field memo</label>
+      <input id="memoInput" class="biz-input" [(ngModel)]="memoInput" />
+
+      <div class="biz-actions">
+        <button class="biz-button biz-button--primary" (click)="runDraftPreview()">Draft preview</button>
+        <button class="biz-button biz-button--secondary" (click)="runPolicyPreview()">Policy preview</button>
+      </div>
+
+      <div class="biz-grid">
+        <div class="biz-panel">
+          <h3>Draft view</h3>
+          <div class="biz-preview" [innerHTML]="draftPreview"></div>
+          <div class="biz-placeholder" *ngIf="!draftPreview">No output yet.</div>
+        </div>
+        <div class="biz-panel">
+          <h3>Policy view</h3>
+          <div class="biz-preview" [innerHTML]="policyPreview"></div>
+          <div class="biz-placeholder" *ngIf="!policyPreview">No output yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="biz-error" *ngIf="error">{{ error }}</div>
+  </div>
+</section>

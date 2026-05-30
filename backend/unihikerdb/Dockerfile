@@ -1,0 +1,17 @@
+FROM maven:3.9.7-eclipse-temurin-21 AS build
+WORKDIR /app
+
+COPY pom.xml ./
+COPY src ./src
+
+RUN mvn -q -DskipTests package
+
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+COPY --from=build /app/target/unihikerdb-0.0.1-SNAPSHOT.jar app.jar
+
+ENV LAB_MODE=false
+EXPOSE 8080
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,0 +1,46 @@
+<section class="biz-page">
+  <div class="biz-shell">
+    <header class="biz-header">
+      <p class="biz-kicker">Operations Suite</p>
+      <h1 class="biz-title">Water Operations Hub</h1>
+      <p class="biz-subtitle">
+        Review intake sources, compliance references, and partner telemetry for active sites.
+      </p>
+    </header>
+
+    <div class="biz-note">Internal workspace. Restricted to approved local environments.</div>
+
+    <nav class="biz-nav">
+      <a
+        *ngFor="let link of navLinks"
+        class="biz-tab"
+        [routerLink]="link.path"
+        routerLinkActive="biz-tab--active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="biz-tab-label">{{ link.label }}</span>
+        <span class="biz-tab-sub">{{ link.sub }}</span>
+      </a>
+    </nav>
+
+    <section class="biz-card">
+      <div class="biz-card-header">
+        <h2>Source Intake Preview</h2>
+        <p class="biz-muted">Load external sampling summaries for vendor review and routing.</p>
+        <span class="biz-pill">Intake feed</span>
+      </div>
+
+      <label class="biz-label" for="sourceUrl">Source registry URL</label>
+      <input id="sourceUrl" class="biz-input" [(ngModel)]="sourceUrl" />
+
+      <div class="biz-actions">
+        <button class="biz-button biz-button--primary" (click)="runPreview(false)">Preview feed</button>
+        <button class="biz-button biz-button--secondary" (click)="runPreview(true)">Policy preview</button>
+      </div>
+
+      <pre class="biz-output">{{ output || 'No response yet.' }}</pre>
+    </section>
+
+    <div class="biz-error" *ngIf="error">{{ error }}</div>
+  </div>
+</section>

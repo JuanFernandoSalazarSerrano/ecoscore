@@ -10,6 +10,10 @@ import { Paladinappointments } from './components/paladinappointments/paladinapp
 import { Reportcomplete } from './components/reportcomplete/reportcomplete';
 import { Paladinbuildreport } from './components/paladinbuildreport/paladinbuildreport';
 import { Waitingforreport } from './components/waitingforreport/waitingforreport';
+import { LabTraining } from './components/lab-training/lab-training';
+import { WaterOperations } from './components/water-ops/water-ops';
+import { FloralProtection } from './components/floral-protection/floral-protection';
+import { EnergyResources } from './components/energy-resources/energy-resources';
 
 export const routes: Routes = [
   {
@@ -27,6 +31,10 @@ export const routes: Routes = [
   { path: 'paladinbuildreport', component: Paladinbuildreport },
   { path: 'waitingforreport', component: Waitingforreport },
   { path: 'solicitation', component: SolicitationFormComponent },
+  { path: 'lab', component: LabTraining },
+  { path: 'water', component: WaterOperations },
+  { path: 'floralprotection', component: FloralProtection },
+  { path: 'energyresources', component: EnergyResources },
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: '**', redirectTo: '/home' },

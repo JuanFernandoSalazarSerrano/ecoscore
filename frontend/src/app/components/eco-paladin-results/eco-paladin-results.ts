@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import DOMPurify from 'dompurify';
 import { catchError, of } from 'rxjs';
 import { AuditResponse, AuditService } from '../../services/audit.service';
 
@@ -179,6 +180,12 @@ export class EcoPaladinResults {
     if (this.ecoScore >= 75) return 'Good';
     if (this.ecoScore >= 50) return 'Fair';
     return 'Needs Improvement';
+  }
+
+  get sanitizedConclusions(): string {
+    return DOMPurify.sanitize(this.reportData.conclusions ?? '', {
+      USE_PROFILES: { html: true },
+    });
   }
 
   get statusColor(): string {

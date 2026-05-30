@@ -1,5 +1,7 @@
 {
   "dependencies": {
-    "@google/genai": "^1.51.0"
+    "@google/genai": "^1.51.0",
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.4.3"
   }
 }

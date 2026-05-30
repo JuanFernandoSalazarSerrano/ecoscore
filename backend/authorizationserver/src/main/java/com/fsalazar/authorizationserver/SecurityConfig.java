@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
@@ -43,6 +42,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 import com.fsalazar.authorizationserver.repository.CompanyRepository;
+import com.fsalazar.authorizationserver.repository.UserRepository;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -52,8 +52,6 @@ import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-	
 
 	@Bean
 	@Order(1)
@@ -93,10 +91,9 @@ public class SecurityConfig {
 				// Form login handles the redirect to the login page from the
 				// authorization server filter chain
 				.formLogin(
-					form -> form.loginPage("/login")
-					.defaultSuccessUrl("/companyhome", false)
-					.permitAll()
-				);
+						form -> form.loginPage("/login")
+								.defaultSuccessUrl("/companyhome", false)
+								.permitAll());
 
 		return http.build();
 	}
@@ -104,7 +101,10 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+		configuration.setAllowedOrigins(List.of(
+				"http://localhost:4200",
+				"http://127.0.0.1:4200",
+				"http://192.168.80.13:4200"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
 		configuration.setExposedHeaders(List.of("Authorization"));
@@ -117,19 +117,18 @@ public class SecurityConfig {
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-		
+
 		UserDetails userDetails = User.withDefaultPasswordEncoder()
 				.username("uao")
 				.password("password")
-				.roles("USER")
+				.roles("COMPANY")
 				.build();
 
 		UserDetails userDetails2 = User.withDefaultPasswordEncoder()
-		.username("Mackensy")
-		.password("contra")
-		.roles("USER")
-		.build();
-
+				.username("juan")
+				.password("contra")
+				.roles("AUDITOR")
+				.build();
 
 		return new InMemoryUserDetailsManager(userDetails, userDetails2);
 	}
@@ -142,15 +141,16 @@ public class SecurityConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.redirectUri("http://localhost:4200/companyhome")
+				.redirectUri("http://192.168.80.13:4200/companyhome")
 				.redirectUri("https://oidcdebugger.com/debug")
 				.postLogoutRedirectUri("http://127.0.0.1:8080/")
 				.scope(OidcScopes.OPENID)
 				.scope(OidcScopes.PROFILE)
 				.clientSettings(
-					ClientSettings.builder()
-					.requireAuthorizationConsent(true)
-					.requireProofKey(true)
-					.build())
+						ClientSettings.builder()
+								.requireAuthorizationConsent(true)
+								.requireProofKey(true)
+								.build())
 				.build();
 
 		return new InMemoryRegisteredClientRepository(oidcClient);
@@ -192,16 +192,22 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(CompanyRepository companyRepository) {
-                return context -> {
-			if (OAuth2TokenType.ACCESS_TOKEN.getValue().equals(context.getTokenType().getValue())) {
-                                // Logged-in user (andres/admin) represented as Authentication principal.
-                                Authentication principal = context.getPrincipal();
-				String username = principal.getName();
+	OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer(UserRepository userRepository,
+			CompanyRepository companyRepository) {
+		return context -> {
+			if (!OAuth2TokenType.ACCESS_TOKEN.getValue().equals(context.getTokenType().getValue())) {
+				return;
+			}
 
-				companyRepository.findCompanyIdByNameIgnoreCase(username)
-						.ifPresent(companyId -> context.getClaims().claim("company_id", companyId));
-                        }
-					};
+			Authentication principal = context.getPrincipal();
+			String username = principal.getName();
+
+			userRepository.findByUsername(username).ifPresent(user -> {
+				context.getClaims().claim("roles", user.getRoles()); // AUDITOR / COMPANY
+				if (user.getCompanyId() != null) {
+					context.getClaims().claim("company_id", user.getCompanyId());
 				}
+			});
+		};
+	}
 }
